@@ -1,0 +1,76 @@
+<div class="register-container">
+  <div class="register-card">
+
+    <div class="register-header">
+      <h1>TaxAccount</h1>
+      <p>Create your account</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input
+            type="text"
+            formControlName="firstName"
+            placeholder="First name"
+            [class.error]="firstName?.invalid && firstName?.touched"/>
+          @if (firstName?.invalid && firstName?.touched) {
+            <span class="error-text">First name is required</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Last Name</label>
+          <input
+            type="text"
+            formControlName="lastName"
+            placeholder="Last name"
+            [class.error]="lastName?.invalid && lastName?.touched"/>
+          @if (lastName?.invalid && lastName?.touched) {
+            <span class="error-text">Last name is required</span>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Enter your email"
+          [class.error]="email?.invalid && email?.touched"/>
+        @if (email?.invalid && email?.touched) {
+          <span class="error-text">Please enter a valid email</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Min 8 characters"
+          [class.error]="password?.invalid && password?.touched"/>
+        @if (password?.invalid && password?.touched) {
+          <span class="error-text">Password must be at least 8 characters</span>
+        }
+      </div>
+
+      @if (errorMessage) {
+        <div class="error-banner">{{ errorMessage }}</div>
+      }
+
+      <button type="submit" [disabled]="isLoading || registerForm.invalid">
+        {{ isLoading ? 'Creating account...' : 'Create Account' }}
+      </button>
+
+    </form>
+
+    <div class="register-footer">
+      <p>Already have an account? <a routerLink="/auth/login">Sign In</a></p>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,172 @@
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>TaxAccount</h2>
+      <span class="role-badge">{{ userRole() }}</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item" (click)="navigateTo('/dashboard')">📊 Dashboard</a>
+      <a class="nav-item active" (click)="navigateTo('/invoices')">🧾 Invoices</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">{{ userName().charAt(0) }}</div>
+        <div>
+          <div class="user-name">{{ userName() }}</div>
+          <div class="user-role">{{ userRole() }}</div>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1>Create Invoice</h1>
+        <p>Fill in the details below</p>
+      </div>
+      <button class="btn-secondary" (click)="navigateTo('/invoices')">
+        ← Back to Invoices
+      </button>
+    </div>
+
+    <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+
+      <!-- Invoice Details -->
+      <div class="section">
+        <h2 class="section-title">Invoice Details</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Customer ID</label>
+            <input
+              type="number"
+              formControlName="customerId"
+              placeholder="Enter customer ID"/>
+          </div>
+          <div class="form-group">
+            <label>Due Date</label>
+            <input
+              type="date"
+              formControlName="dueDate"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea
+            formControlName="notes"
+            placeholder="Optional notes..."
+            rows="3">
+          </textarea>
+        </div>
+      </div>
+
+      <!-- Invoice Items -->
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">Invoice Items</h2>
+          <button type="button" class="btn-add" (click)="addItem()">
+            + Add Item
+          </button>
+        </div>
+
+        <div formArrayName="items">
+          @for (item of items.controls; track $index) {
+            <div [formGroupName]="$index" class="item-card">
+              <div class="item-header">
+                <span>Item {{ $index + 1 }}</span>
+                @if (items.length > 1) {
+                  <button type="button"
+                    class="btn-remove"
+                    (click)="removeItem($index)">
+                    ✕ Remove
+                  </button>
+                }
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Product</label>
+                  <select formControlName="productId"
+                    (change)="onProductChange($index)">
+                    <option value="">Select product</option>
+                    @for (product of products(); track product.id) {
+                      <option [value]="product.id">{{ product.name }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Description</label>
+                  <input type="text"
+                    formControlName="description"
+                    placeholder="Item description"/>
+                </div>
+              </div>
+
+              <div class="form-row form-row-4">
+                <div class="form-group">
+                  <label>Quantity</label>
+                  <input type="number"
+                    formControlName="quantity"
+                    min="0.01" step="0.01"/>
+                </div>
+                <div class="form-group">
+                  <label>Unit Price (₹)</label>
+                  <input type="number"
+                    formControlName="unitPrice"
+                    min="0.01" step="0.01"/>
+                </div>
+                <div class="form-group">
+                  <label>GST %</label>
+                  <input type="number"
+                    formControlName="taxPercent"
+                    min="0" max="100"/>
+                </div>
+                <div class="form-group">
+                  <label>Total</label>
+                  <div class="item-total">
+                    ₹{{ getItemTotal($index) | number:'1.2-2' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Totals -->
+        <div class="totals">
+          <div class="total-row">
+            <span>Subtotal</span>
+            <span>₹{{ getSubTotal() | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-row">
+            <span>GST</span>
+            <span>₹{{ getTotalTax() | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-row grand-total">
+            <span>Total</span>
+            <span>₹{{ getGrandTotal() | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="error-banner">{{ errorMessage() }}</div>
+      }
+
+      <div class="form-actions">
+        <button type="button"
+          class="btn-secondary"
+          (click)="navigateTo('/invoices')">
+          Cancel
+        </button>
+        <button type="submit"
+          class="btn-primary"
+          [disabled]="invoiceForm.invalid || isSubmitting()">
+          {{ isSubmitting() ? 'Creating...' : 'Create Invoice' }}
+        </button>
+      </div>
+
+    </form>
+  </main>
+</div>
