@@ -15,7 +15,7 @@ export class DashboardComponent implements OnInit {
   dashboardData = signal<DashboardData | null>(null);
   isLoading = signal(true);
   userName = signal('');
-  userRole = signal('');
+  //userRole = signal('');
 
   constructor(
     private homeService: HomeService,
@@ -26,7 +26,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
     this.userName.set(user?.fullName || '');
-    this.userRole.set(user?.role || '');
+    //this.userRole.set(user?.role || '');
     this.loadDashboard();
   }
 
@@ -43,10 +43,10 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/auth/login']);
-  }
+  // logout(): void {
+  //   this.authService.logout();
+  //   this.router.navigate(['/auth/login']);
+  // }
 
   navigateTo(path: string): void {
     this.router.navigate([path]);

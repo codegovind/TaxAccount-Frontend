@@ -17,7 +17,7 @@ export class InvoiceDetailComponent implements OnInit {
   isLoading = signal(true);
   isUpdating = signal(false);
   userName = signal('');
-  userRole = signal('');
+  //userRole = signal('');
 
   statusOptions = [
     { value: 1, label: 'Draft' },
@@ -36,7 +36,7 @@ export class InvoiceDetailComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
     this.userName.set(user?.fullName || '');
-    this.userRole.set(user?.role || '');
+    //this.userRole.set(user?.role || '');
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) this.loadInvoice(+id);
@@ -87,8 +87,8 @@ export class InvoiceDetailComponent implements OnInit {
     this.router.navigate([path]);
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/auth/login']);
-  }
+  // logout(): void {
+  //   this.authService.logout();
+  //   this.router.navigate(['/auth/login']);
+  // }
 }

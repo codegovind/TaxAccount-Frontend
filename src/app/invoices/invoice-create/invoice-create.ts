@@ -19,7 +19,7 @@ export class InvoiceCreateComponent implements OnInit {
   isSubmitting = signal(false);
   errorMessage = signal('');
   userName = signal('');
-  userRole = signal('');
+  //userRole = signal('');
   products = signal<any[]>([]);
 
   constructor(
@@ -40,7 +40,7 @@ export class InvoiceCreateComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
     this.userName.set(user?.fullName || '');
-    this.userRole.set(user?.role || '');
+    //this.userRole.set(user?.role || '');
     this.loadProducts();
     this.addItem();
   }
@@ -132,8 +132,8 @@ export class InvoiceCreateComponent implements OnInit {
     this.router.navigate([path]);
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/auth/login']);
-  }
+  // logout(): void {
+  //   this.authService.logout();
+  //   this.router.navigate(['/auth/login']);
+  // }
 }

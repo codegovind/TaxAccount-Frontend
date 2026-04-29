@@ -16,7 +16,7 @@ export class InvoiceListComponent implements OnInit {
   invoices = signal<InvoiceResponse[]>([]);
   isLoading = signal(true);
   userName = signal('');
-  userRole = signal('');
+  //userRole = signal('');
 
   constructor(
     private invoiceService: InvoiceService,
@@ -27,7 +27,7 @@ export class InvoiceListComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
     this.userName.set(user?.fullName || '');
-    this.userRole.set(user?.role || '');
+    //this.userRole.set(user?.role || '');
     this.loadInvoices();
   }
 
@@ -52,10 +52,10 @@ export class InvoiceListComponent implements OnInit {
     this.router.navigate(['/invoices', id]);
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/auth/login']);
-  }
+  // logout(): void {
+  //   this.authService.logout();
+  //   this.router.navigate(['/auth/login']);
+  // }
 
   getStatusClass(status: string): string {
     switch (status.toLowerCase()) {

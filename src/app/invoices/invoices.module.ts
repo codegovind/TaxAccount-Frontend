@@ -14,8 +14,8 @@ const routes: Routes = [
   imports: [
     RouterModule.forChild(routes),
     InvoiceListComponent,
-    //InvoiceCreateComponent,
-    //InvoiceDetailComponent
+    InvoiceCreateComponent,
+    InvoiceDetailComponent
   ]
 })
 export class InvoicesModule {}

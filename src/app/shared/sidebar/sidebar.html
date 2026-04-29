@@ -1,0 +1,28 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>TaxAccount</h2>
+    <span class="role-badge">{{ userRole() }}</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    @for (item of navItems; track item.path) {
+      <a
+        class="nav-item"
+        [class.active]="isActive(item.path)"
+        (click)="navigateTo(item.path)">
+        {{ item.icon }} {{ item.label }}
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">{{ userName().charAt(0) }}</div>
+      <div>
+        <div class="user-name">{{ userName() }}</div>
+        <div class="user-role">{{ userRole() }}</div>
+      </div>
+    </div>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+</aside>
