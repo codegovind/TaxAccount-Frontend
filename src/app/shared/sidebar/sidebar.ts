@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, Input } from '@angular/core';
+import { Component, OnInit, signal, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -12,6 +12,7 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class SidebarComponent implements OnInit {
   @Input() isOpen = false;
+  @Output() closeSidebar = new EventEmitter<void>();
   userName = signal('');
   userRole = signal('');
   currentPath = signal('');
@@ -33,16 +34,19 @@ export class SidebarComponent implements OnInit {
     this.currentPath.set(this.router.url);
   }
 
+
   isActive(path: string): boolean {
     return this.router.url.startsWith(path);
   }
 
   navigateTo(path: string): void {
     this.router.navigate([path]);
+    this.closeSidebar.emit();
   }
 
   logout(): void {
     this.authService.logout();
+    this.closeSidebar.emit();
     this.router.navigate(['/auth/login']);
   }
 }
