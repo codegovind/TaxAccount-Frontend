@@ -27,9 +27,6 @@ jobs:
       - name: Step 4 - Build Angular
         run: npm run build -- --configuration=production
 
-      - name: Step 4.5 - Debug Path
-        run: ls -R dist/
-
       - name: Step 5 - Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
