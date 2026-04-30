@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -11,6 +11,7 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './sidebar.scss'
 })
 export class SidebarComponent implements OnInit {
+  @Input() isOpen = false;
   userName = signal('');
   userRole = signal('');
   currentPath = signal('');
