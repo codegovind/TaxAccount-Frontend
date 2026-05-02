@@ -15,7 +15,6 @@ export class DashboardComponent implements OnInit {
   dashboardData = signal<DashboardData | null>(null);
   isLoading = signal(true);
   userName = signal('');
-  //userRole = signal('');
 
   constructor(
     private homeService: HomeService,
@@ -25,8 +24,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
-    this.userName.set(user?.fullName || '');
-    //this.userRole.set(user?.role || '');
+    this.userName.set(user?.email || '');
     this.loadDashboard();
   }
 
@@ -43,22 +41,27 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // logout(): void {
-  //   this.authService.logout();
-  //   this.router.navigate(['/auth/login']);
-  // }
-
   navigateTo(path: string): void {
     this.router.navigate([path]);
   }
 
-  getStatusClass(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'paid': return 'status-paid';
-      case 'sent': return 'status-sent';
-      case 'draft': return 'status-draft';
-      case 'cancelled': return 'status-cancelled';
+  getStatusClass(statusEnum: number): string {
+    switch (statusEnum) {
+      case 3: return 'status-paid';
+      case 2: return 'status-sent';
+      case 1: return 'status-draft';
+      case 4: return 'status-cancelled';
       default: return '';
+    }
+  }
+
+  getStatusText(statusEnum: number): string {
+    switch (statusEnum) {
+      case 3: return 'Paid';
+      case 2: return 'Sent';
+      case 1: return 'Draft';
+      case 4: return 'Cancelled';
+      default: return 'Unknown';
     }
   }
 }

@@ -1,29 +1,4 @@
 <div class="app-layout">
-  <!-- <aside class="sidebar">
-    <div class="sidebar-header">
-      <h2>TaxAccount</h2>
-      <span class="role-badge">{{ userRole() }}</span>
-    </div>
-    <nav class="sidebar-nav">
-      <a class="nav-item" (click)="navigateTo('/dashboard')">
-        📊 Dashboard
-      </a>
-      <a class="nav-item active" (click)="navigateTo('/invoices')">
-        🧾 Invoices
-      </a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-avatar">{{ userName().charAt(0) }}</div>
-        <div>
-          <div class="user-name">{{ userName() }}</div>
-          <div class="user-role">{{ userRole() }}</div>
-        </div>
-      </div>
-      <button class="logout-btn" (click)="logout()">Logout</button>
-    </div>
-  </aside> -->
-
  <main class="main-content">
     <div class="page-header">
       <div>
@@ -60,13 +35,13 @@
               @for (invoice of invoices(); track invoice.id) {
                 <tr>
                   <td><strong>{{ invoice.invoiceNumber }}</strong></td>
-                  <td>{{ invoice.customerName }}</td>
+                  <td>{{ invoice.contactName || 'Cash Sale' }}</td>
                   <td>{{ invoice.invoiceDate | date:'dd MMM yyyy' }}</td>
                   <td>{{ invoice.dueDate | date:'dd MMM yyyy' }}</td>
                   <td>₹{{ invoice.totalAmount | number:'1.2-2' }}</td>
                   <td>
                     <span [class]="'status-badge ' + getStatusClass(invoice.status)">
-                      {{ invoice.status }}
+                      {{ getStatusText(invoice.status) }}
                     </span>
                   </td>
                   <td>

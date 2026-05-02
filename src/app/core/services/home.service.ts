@@ -16,10 +16,10 @@ export interface DashboardData {
 export interface RecentInvoice {
   id: number;
   invoiceNumber: string;
-  customerName: string;
+  contactName?: string; // UPDATED: Replaced customerName, made optional for Cash Sales
   totalAmount: number;
-  status: string;
-  invoiceDate: Date;
+  status: number;       // UPDATED: Changed from string to number (our new Enum)
+  invoiceDate: Date | string; 
 }
 
 @Injectable({

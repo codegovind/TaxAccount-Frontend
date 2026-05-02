@@ -1,24 +1,4 @@
 <div class="app-layout">
-  <!-- <aside class="sidebar">
-    <div class="sidebar-header">
-      <h2>TaxAccount</h2>
-      <span class="role-badge">{{ userRole() }}</span>
-    </div>
-    <nav class="sidebar-nav">
-      <a class="nav-item" (click)="navigateTo('/dashboard')">📊 Dashboard</a>
-      <a class="nav-item active" (click)="navigateTo('/invoices')">🧾 Invoices</a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-avatar">{{ userName().charAt(0) }}</div>
-        <div>
-          <div class="user-name">{{ userName() }}</div>
-          <div class="user-role">{{ userRole() }}</div>
-        </div>
-      </div>
-      <button class="logout-btn" (click)="logout()">Logout</button>
-    </div>
-  </aside> -->
 
    <main class="main-content">
 
@@ -31,7 +11,7 @@
         <div>
           <h1>{{ invoice()!.invoiceNumber }}</h1>
           <span [class]="'status-badge ' + getStatusClass(invoice()!.status)">
-            {{ invoice()!.status }}
+            {{ getStatusText(invoice()!.status) }}
           </span>
         </div>
         <button class="btn-secondary" (click)="navigateTo('/invoices')">
@@ -45,7 +25,7 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="info-label">Customer</span>
-            <span class="info-value">{{ invoice()!.customerName }}</span>
+            <span class="info-value">{{ invoice()!.contactName }}</span>
           </div>
           <div class="info-item">
             <span class="info-label">Created By</span>
@@ -56,6 +36,10 @@
             <span class="info-value">
               {{ invoice()!.invoiceDate | date:'dd MMM yyyy' }}
             </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Bill To</span>
+            <span class="info-value">{{ invoice()!.contactName || 'Cash Sale (Walk-in)' }}</span>
           </div>
           <div class="info-item">
             <span class="info-label">Due Date</span>
@@ -127,7 +111,7 @@
             @for (option of statusOptions; track option.value) {
               <button
                 [class]="'status-btn status-btn-' + option.label.toLowerCase()"
-                [disabled]="invoice()!.status === option.label || isUpdating()"
+                [disabled]="invoice()!.status === option.value || isUpdating()"
                 (click)="updateStatus(option.value)">
                 {{ option.label }}
               </button>

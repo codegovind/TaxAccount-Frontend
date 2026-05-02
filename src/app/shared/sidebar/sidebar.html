@@ -1,6 +1,7 @@
 <aside class="sidebar" [class.open]="isOpen">
   <div class="sidebar-header">
-    <h2>TaxAccount</h2>
+    <!-- NEW: Dynamically displays the logged-in user's Company Name -->
+    <h2>{{ companyName() }}</h2>
     <span class="role-badge">{{ userRole() }}</span>
   </div>
 
@@ -17,9 +18,11 @@
 
   <div class="sidebar-footer">
     <div class="user-info">
-      <div class="user-avatar">{{ userName().charAt(0) }}</div>
+      <!-- We use the first letter of the email/username as the avatar -->
+      <div class="user-avatar">{{ userName().charAt(0).toUpperCase() }}</div>
       <div>
-        <div class="user-name">{{ userName() }}</div>
+        <!-- Shows the email -->
+        <div class="user-name" style="word-break: break-all;">{{ userName() }}</div>
         <div class="user-role">{{ userRole() }}</div>
       </div>
     </div>

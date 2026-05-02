@@ -35,7 +35,7 @@ export class InvoiceDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
-    this.userName.set(user?.fullName || '');
+    this.userName.set(user?.email || '');
     //this.userRole.set(user?.role || '');
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -69,13 +69,23 @@ export class InvoiceDetailComponent implements OnInit {
     });
   }
 
-  getStatusClass(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'paid': return 'status-paid';
-      case 'sent': return 'status-sent';
-      case 'draft': return 'status-draft';
-      case 'cancelled': return 'status-cancelled';
+  getStatusClass(statusEnum: number): string {
+    switch (statusEnum) {
+      case 3: return 'status-paid';
+      case 2: return 'status-sent';
+      case 1: return 'status-draft';
+      case 4: return 'status-cancelled';
       default: return '';
+    }
+  }
+
+  getStatusText(statusEnum: number): string {
+    switch (statusEnum) {
+      case 3: return 'Paid';
+      case 2: return 'Sent';
+      case 1: return 'Draft';
+      case 4: return 'Cancelled';
+      default: return 'Unknown';
     }
   }
 
@@ -87,8 +97,4 @@ export class InvoiceDetailComponent implements OnInit {
     this.router.navigate([path]);
   }
 
-  // logout(): void {
-  //   this.authService.logout();
-  //   this.router.navigate(['/auth/login']);
-  // }
 }

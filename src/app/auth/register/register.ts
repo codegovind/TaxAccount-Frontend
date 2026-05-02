@@ -22,11 +22,14 @@ export class RegisterComponent {
     private router: Router
   ) {
     this.registerForm = this.fb.group({
+      // NEW: We must capture the company name to create the Tenant
+      companyName: ['', [Validators.required, Validators.minLength(3)]],
+      companyEmail: ['', [Validators.required, Validators.email]],
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      roleId: [4]
+      roleId: [1] // 1 = Owner (They are creating the tenant account)
     });
   }
 
@@ -37,6 +40,7 @@ export class RegisterComponent {
 
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
+        // Because of the 'tap' in our AuthService, the token is already saved!
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
@@ -46,6 +50,8 @@ export class RegisterComponent {
     });
   }
 
+  // Quick getters for the HTML template
+  get companyName() { return this.registerForm.get('companyName'); }
   get firstName() { return this.registerForm.get('firstName'); }
   get lastName() { return this.registerForm.get('lastName'); }
   get email() { return this.registerForm.get('email'); }

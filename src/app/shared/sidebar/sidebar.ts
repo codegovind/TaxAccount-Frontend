@@ -13,8 +13,11 @@ import { AuthService } from '../../core/services/auth.service';
 export class SidebarComponent implements OnInit {
   @Input() isOpen = false;
   @Output() closeSidebar = new EventEmitter<void>();
+  
+  // Signals to hold our UI data
   userName = signal('');
   userRole = signal('');
+  companyName = signal('TaxAccount'); // Default fallback
   currentPath = signal('');
 
   navItems = [
@@ -28,12 +31,20 @@ export class SidebarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // This grabs the DecodedToken from our updated AuthService
     const user = this.authService.getCurrentUser();
-    this.userName.set(user?.fullName || '');
-    this.userRole.set(user?.role || '');
+    
+    if (user) {
+      // Map the JWT claims to our UI signals
+      this.companyName.set(user.CompanyName || 'TaxAccount');
+      
+      // Tokens usually rely on email instead of full name for identity
+      this.userName.set(user.email || 'User'); 
+      this.userRole.set(user.role || 'Admin');
+    }
+    
     this.currentPath.set(this.router.url);
   }
-
 
   isActive(path: string): boolean {
     return this.router.url.startsWith(path);

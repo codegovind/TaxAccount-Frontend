@@ -8,6 +8,29 @@
 
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
+      <!-- NEW: Company Name Field -->
+      <div class="form-group">
+        <label>Company Name</label>
+        <input
+          type="text"
+          formControlName="companyName"
+          placeholder="e.g. Tekale Enterprises"
+          [class.error]="companyName?.invalid && companyName?.touched"/>
+        @if (companyName?.invalid && companyName?.touched) {
+          <span class="error-text">Company name is required (min 3 characters)</span>
+        }
+      </div>
+      <div class="form-group">
+  <label>Company Email</label>
+  <input
+    type="email"
+    formControlName="companyEmail"
+    placeholder="business@example.com"
+    [class.error]="registerForm.get('companyEmail')?.invalid && registerForm.get('companyEmail')?.touched"/>
+  @if (registerForm.get('companyEmail')?.invalid && registerForm.get('companyEmail')?.touched) {
+    <span class="error-text">Valid company email is required</span>
+  }
+</div>      
       <div class="form-row">
         <div class="form-group">
           <label>First Name</label>
