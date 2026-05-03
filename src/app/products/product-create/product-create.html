@@ -1,0 +1,94 @@
+<div class="page-header">
+  <div>
+    <h1>{{ isEditMode() ? 'Edit Product' : 'Add Product' }}</h1>
+    <p>{{ isEditMode() ? 'Update product details' : 'Add a new product to inventory' }}</p>
+  </div>
+  <button class="btn-secondary" (click)="router.navigate(['/products'])">← Back</button>
+</div>
+
+@if (isLoading()) {
+  <div class="loading">Loading...</div>
+}
+
+@if (!isLoading()) {
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+    <div class="section">
+      <h2 class="section-title">Basic Information</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Product Name *</label>
+          <input type="text" formControlName="name" placeholder="e.g. Samsung TV 55 inch"/>
+          @if (f['name'].invalid && f['name'].touched) {
+            <span class="error-text">Name is required (min 2 chars)</span>
+          }
+        </div>
+        <div class="form-group">
+          <label>SKU</label>
+          <input type="text" formControlName="sku" placeholder="e.g. SAM-TV-55"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>HSN Code</label>
+          <input type="text" formControlName="hsnCode" placeholder="e.g. 8528"/>
+        </div>
+        <div class="form-group">
+          <label>Unit *</label>
+          <select formControlName="unit">
+            @for (unit of units; track unit) {
+              <option [value]="unit">{{ unit }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Pricing & Tax</h2>
+      <div class="form-row form-row-3">
+        <div class="form-group">
+          <label>Purchase Price (₹) *</label>
+          <input type="number" formControlName="purchasePrice" min="0" step="0.01"/>
+        </div>
+        <div class="form-group">
+          <label>Market Value / NRV (₹) *</label>
+          <input type="number" formControlName="marketValue" min="0" step="0.01"/>
+        </div>
+        <div class="form-group">
+          <label>Selling Price (₹) *</label>
+          <input type="number" formControlName="price" min="0.01" step="0.01"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>GST Rate *</label>
+          <select formControlName="gstPercent">
+            @for (rate of gstRates; track rate) {
+              <option [value]="rate">{{ rate }}%</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Opening Stock</label>
+          <!-- SECURITY FIX: Readonly when editing -->
+          <input type="number" formControlName="stock" min="0" step="0.01" [readonly]="isEditMode()"/>
+          @if (isEditMode()) {
+            <small class="hint text-danger">Use 'Stock Adjustment' module to change stock safely.</small>
+          }
+        </div>
+      </div>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="productForm.invalid || isSubmitting()">
+        {{ isSubmitting() ? 'Saving...' : (isEditMode() ? 'Update Product' : 'Add Product') }}
+      </button>
+    </div>
+  </form>
+}

@@ -1,0 +1,49 @@
+<div class="page-header">
+  <div>
+    <h1>Products & Inventory</h1>
+    <p>Manage your product catalog</p>
+  </div>
+  <button class="btn-primary" (click)="router.navigate(['/products/create'])">+ Add Product</button>
+</div>
+
+@if (isLoading()) {
+  <div class="loading">Loading products...</div>
+} @else {
+  <div class="section">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>SKU</th>
+            <th>Purchase Price</th>
+            <th>Selling Price</th>
+            <th>Stock</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of products(); track product.id) {
+            <tr>
+              <td><strong>{{ product.name }}</strong></td>
+              <td>{{ product.sku || '-' }}</td>
+              <td>₹{{ product.purchasePrice | number:'1.2-2' }}</td>
+              <td>₹{{ product.price | number:'1.2-2' }}</td>
+              <td>
+                <span [style.color]="product.stock <= 0 ? '#d32f2f' : 'inherit'" style="font-weight: bold;">
+                  {{ product.stock }} {{ product.unit }}
+                </span>
+              </td>
+              <td>
+                <button class="btn-view" (click)="router.navigate(['/products/edit', product.id])">Edit</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      @if (products().length === 0) {
+        <div class="empty-state">No products found.</div>
+      }
+    </div>
+  </div>
+}
