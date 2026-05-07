@@ -1,0 +1,175 @@
+<div class="page-header">
+  <div>
+    <h1>Purchase</h1>
+    <p>Manage purchase bills and orders</p>
+  </div>
+  @if (hasPermission('invoices.create')) {
+    <div class="header-actions">
+      <button class="btn-secondary"
+        (click)="navigateTo('/purchase/create?type=order')">
+        + Purchase Order
+      </button>
+      <button class="btn-primary"
+        (click)="navigateTo('/purchase/create')">
+        + Purchase Bill
+      </button>
+    </div>
+  }
+</div>
+
+<!-- Summary -->
+<div class="summary-row">
+  <div class="summary-card">
+    <span class="summary-label">Total Bills</span>
+    <span class="summary-value">{{ bills().length }}</span>
+  </div>
+  <div class="summary-card">
+    <span class="summary-label">Total Purchase Value</span>
+    <span class="summary-value">
+      ₹{{ getTotalBillAmount() | number:'1.2-2' }}
+    </span>
+  </div>
+  <div class="summary-card">
+    <span class="summary-label">Open Orders</span>
+    <span class="summary-value text-orange">
+      {{ orders().filter(o =>
+        o.status !== 'Cancelled' && o.status !== 'Received').length }}
+    </span>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button [class.active]="activeTab() === 'bills'"
+    (click)="setTab('bills')">
+    Purchase Bills ({{ bills().length }})
+  </button>
+  <button [class.active]="activeTab() === 'orders'"
+    (click)="setTab('orders')">
+    Purchase Orders ({{ orders().length }})
+  </button>
+</div>
+
+@if (isLoading()) {
+  <div class="loading">Loading...</div>
+}
+
+@if (!isLoading()) {
+
+  <!-- Bills Tab -->
+  @if (activeTab() === 'bills') {
+    <div class="section">
+      <table>
+        <thead>
+          <tr>
+            <th>Bill #</th>
+            <th>Vendor Bill #</th>
+            <th>Vendor</th>
+            <th>Date</th>
+            <th>Due Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (bill of bills(); track bill.id) {
+            <tr>
+              <td><strong>{{ bill.billNumber }}</strong></td>
+              <td>{{ bill.vendorBillNumber || '-' }}</td>
+              <td>{{ bill.vendorName }}</td>
+              <td>{{ bill.billDate | date:'dd MMM yyyy' }}</td>
+              <td>
+                @if (bill.dueDate) {
+                  {{ bill.dueDate | date:'dd MMM yyyy' }}
+                } @else { - }
+              </td>
+              <td>₹{{ bill.totalAmount | number:'1.2-2' }}</td>
+              <td>
+                <span [class]="'status-badge ' +
+                  getStatusClass(bill.status)">
+                  {{ bill.status }}
+                </span>
+              </td>
+              <td>
+                <button class="btn-view"
+                  (click)="viewBill(bill.id)">View</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (bills().length === 0) {
+        <div class="empty-state">
+          <p>No purchase bills yet.</p>
+          <button class="btn-primary"
+            (click)="navigateTo('/purchase/create')">
+            Create First Bill
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Orders Tab -->
+  @if (activeTab() === 'orders') {
+    <div class="section">
+      <table>
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Vendor</th>
+            <th>Order Date</th>
+            <th>Expected</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders(); track order.id) {
+            <tr>
+              <td><strong>{{ order.orderNumber }}</strong></td>
+              <td>{{ order.vendorName }}</td>
+              <td>{{ order.orderDate | date:'dd MMM yyyy' }}</td>
+              <td>
+                @if (order.expectedDate) {
+                  {{ order.expectedDate | date:'dd MMM yyyy' }}
+                } @else { - }
+              </td>
+              <td>₹{{ order.totalAmount | number:'1.2-2' }}</td>
+              <td>
+                <span [class]="'status-badge ' +
+                  getStatusClass(order.status)">
+                  {{ order.status }}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  @if (order.status !== 'Cancelled' &&
+                      order.status !== 'Received') {
+                    <button class="btn-convert"
+                      (click)="convertToBill(order.id)">
+                      → Bill
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (orders().length === 0) {
+        <div class="empty-state">
+          <p>No purchase orders yet.</p>
+          <button class="btn-primary"
+            (click)="navigateTo('/purchase/create?type=order')">
+            Create First Order
+          </button>
+        </div>
+      }
+    </div>
+  }
+}

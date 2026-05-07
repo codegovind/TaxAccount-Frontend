@@ -1,1 +1,97 @@
-<p>stock-adjust works!</p>
+<div class="page-header">
+  <div>
+    <h1>Adjust Stock Levels</h1>
+    <p>Record manual inventory corrections and audit findings.</p>
+  </div>
+  <button class="btn-secondary" (click)="router.navigate(['/stock'])">← Cancel</button>
+</div>
+
+@if (isLoading()) {
+  <div class="loading">Loading inventory data...</div>
+}
+
+@if (!isLoading()) {
+  <div class="section">
+    <form [formGroup]="adjustForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Select Product *</label>
+          <select formControlName="productId" (change)="onProductSelect()">
+            <option value="" disabled>-- Choose a Product --</option>
+            @for (product of products(); track product.id) {
+              <option [value]="product.id">{{ product.name }} (Current: {{ product.stock }})</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Reason Code *</label>
+          <select formControlName="reasonCode">
+            <option value="" disabled>-- Select Reason --</option>
+            @for (reason of reasonCodes; track reason) {
+              <option [value]="reason">{{ reason }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row" style="align-items: flex-end;">
+        <div class="form-group">
+          <label>Adjustment Type *</label>
+          <div style="display: flex; gap: 15px; margin-top: 8px;">
+            <label>
+              <input type="radio" formControlName="adjustmentType" value="Add"> Add (+)
+            </label>
+            <label>
+              <input type="radio" formControlName="adjustmentType" value="Deduct"> Deduct (-)
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Quantity *</label>
+          <input type="number" formControlName="quantity" min="0.01" step="0.01" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Remarks / Notes</label>
+        <textarea formControlName="notes" rows="2" placeholder="Provide details for the auditor..."></textarea>
+      </div>
+
+      <!-- Live Stock Preview Card -->
+      @if (selectedProduct()) {
+        <div style="margin-top: 24px; padding: 15px; border-radius: 6px; background: #f8f9fa; border: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h4 style="margin: 0 0 5px 0; color: #555;">Current Stock</h4>
+            <span style="font-size: 1.2em; font-weight: bold;">{{ selectedProduct()?.stock }} {{ selectedProduct()?.unit }}</span>
+          </div>
+          <div style="font-size: 1.5em; color: #888;">➔</div>
+          <div style="text-align: right;">
+            <h4 style="margin: 0 0 5px 0; color: #555;">New Stock Preview</h4>
+            <span style="font-size: 1.2em; font-weight: bold;" [style.color]="isNegativeStock() ? '#d32f2f' : '#2e7d32'">
+              {{ getNewStockPreview() }} {{ selectedProduct()?.unit }}
+            </span>
+          </div>
+        </div>
+        
+        @if (isNegativeStock()) {
+          <div class="error-text" style="margin-top: 10px; text-align: right;">
+            ⚠️ Cannot deduct more stock than currently available.
+          </div>
+        }
+      }
+
+      @if (errorMessage()) {
+        <div class="error-banner" style="margin-top: 15px;">{{ errorMessage() }}</div>
+      }
+
+      <div class="form-actions" style="margin-top: 24px;">
+        <button type="submit" class="btn-primary" [disabled]="adjustForm.invalid || isNegativeStock() || isSubmitting()">
+          {{ isSubmitting() ? 'Recording...' : 'Record Adjustment' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

@@ -1,1 +1,39 @@
-<p>contact-list works!</p>
+<div class="page-header">
+  <h1>Contacts</h1>
+  <button class="btn-primary" (click)="router.navigate(['/contacts/create'])">+ Add Contact</button>
+</div>
+
+@if (isLoading()) {
+  <div class="loading">Loading contacts...</div>
+} @else {
+  <div class="section">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>GSTIN</th>
+            <th>Phone</th>
+            <th>State</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (contact of contacts(); track contact.id) {
+            <tr>
+              <td><strong>{{ contact.name }}</strong></td>
+              <td><span class="badge">{{ getContactTypeLabel(contact.contactType) }}</span></td>
+              <td>{{ contact.gstNumber || 'URD' }}</td>
+              <td>{{ contact.phone || '-' }}</td>
+              <td>{{ contact.state }}</td>
+              <td>
+                <button class="btn-view" (click)="router.navigate(['/contacts/edit', contact.id])">Edit</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

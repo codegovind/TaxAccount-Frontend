@@ -1,24 +1,43 @@
 <div class="app-layout">
-  <div class="mobile-header">
-    <button class="hamburger" (click)="toggleSidebar()">☰</button>
-    <h2>TaxAccount</h2>
+    <app-sidebar [isOpen]="isMobileSidebarOpen" 
+    (closeSidebar)="closeMobileSidebar()"></app-sidebar>
+
+    @if (isMobileSidebarOpen) {
+    <div class="mobile-overlay" (click)="closeMobileSidebar()"></div>
+  }
+    <main class="main-content">
+      <header class="top-header">
+        <div class="header-left">
+          <!-- 3. Mobile Toggle Button (Only visible on small screens) -->
+        <button class="mobile-toggle-btn" (click)="toggleMobileSidebar()">
+          ☰
+        </button>
+          <!-- Global Search Bar -->
+          <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search in Customers ( / )" class="global-search" />
+          </div>
+        </div>
+
+        <div class="header-right">
+          <span class="tenant-name">Govind</span>
+          
+          <!-- Quick Create Button -->
+          <button class="btn-icon btn-primary rounded-circle" title="Quick Create">
+            ＋
+          </button>
+          
+          <!-- Utility Icons -->
+          <button class="btn-icon">🔔</button>
+          <button class="btn-icon">⚙️</button>
+          
+          <!-- User Avatar -->
+          <div class="user-avatar">G</div>
+        </div>
+      </header>
+      
+      <div class="page-container">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
   </div>
-
-  <div class="sidebar-overlay"
-    [class.active]="sidebarOpen"
-    (click)="toggleSidebar()">
-  </div>
-
-  <!-- <app-sidebar [isOpen]="sidebarOpen"></app-sidebar> -->
-
-  <!-- <app-sidebar [isOpen]="sidebarOpen"></app-sidebar> -->
-
-  <app-sidebar 
-    [isOpen]="sidebarOpen" 
-    (closeSidebar)="sidebarOpen = false">
-  </app-sidebar>
-
-  <main class="main-content">
-    <router-outlet></router-outlet>
-  </main>
-</div>

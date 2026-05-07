@@ -1,31 +1,27 @@
-<aside class="sidebar" [class.open]="isOpen">
+<aside class="sidebar" [class.collapsed]="isCollapsed()" [class.mobile-open]="isOpen">
   <div class="sidebar-header">
-    <!-- NEW: Dynamically displays the logged-in user's Company Name -->
-    <h2>{{ companyName() }}</h2>
-    <span class="role-badge">{{ userRole() }}</span>
+    <div class="brand">
+      <span class="brand-text">{{ companyName() }}</span>
+    </div>
+    <button class="toggle-btn" (click)="toggleSidebar()">
+      <span class="icon">☰</span>
+    </button>
   </div>
 
   <nav class="sidebar-nav">
-    @for (item of navItems; track item.path) {
-      <a
-        class="nav-item"
-        [class.active]="isActive(item.path)"
-        (click)="navigateTo(item.path)">
-        {{ item.icon }} {{ item.label }}
+    @for (item of menuItems; track item.path) {
+      <a [routerLink]="item.path" routerLinkActive="active" class="nav-item" (click)="onItemClick()">
+        <span class="icon">{{ item.icon }}</span>
+        <span class="nav-text">{{ item.title }}</span>
       </a>
     }
   </nav>
 
+  <!-- Updated to modern @if syntax -->
   <div class="sidebar-footer">
-    <div class="user-info">
-      <!-- We use the first letter of the email/username as the avatar -->
-      <div class="user-avatar">{{ userName().charAt(0).toUpperCase() }}</div>
-      <div>
-        <!-- Shows the email -->
-        <div class="user-name" style="word-break: break-all;">{{ userName() }}</div>
-        <div class="user-role">{{ userRole() }}</div>
-      </div>
-    </div>
-    <button class="logout-btn" (click)="logout()">Logout</button>
+    <button class="nav-item logout-btn" (click)="onLogout()">
+      <span class="icon">🚪</span>
+      <span class="nav-text">Logout</span>
+    </button>
   </div>
 </aside>

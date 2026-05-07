@@ -1,0 +1,117 @@
+<div class="page-header">
+  <div>
+    <h1>Purchase Orders</h1>
+    <p>Track orders placed with vendors</p>
+  </div>
+  @if (hasPermission('invoices.create')) {
+    <button class="btn-primary"
+      (click)="router.navigate(['/purchase/orders/create'])">
+      + New Order
+    </button>
+  }
+</div>
+
+<!-- Summary -->
+<div class="summary-row">
+  <div class="summary-card">
+    <span class="summary-label">Total Orders</span>
+    <span class="summary-value">{{ orders().length }}</span>
+  </div>
+  <div class="summary-card">
+    <span class="summary-label">Pending</span>
+    <span class="summary-value text-orange">
+      {{ getPendingCount() }}
+    </span>
+  </div>
+  <div class="summary-card">
+    <span class="summary-label">Total Value</span>
+    <span class="summary-value">
+      ₹{{ orders().reduce((s,o) => s + o.totalAmount, 0) |
+        number:'1.2-2' }}
+    </span>
+  </div>
+</div>
+
+@if (isLoading()) {
+  <div class="loading">Loading orders...</div>
+}
+
+@if (!isLoading()) {
+  <div class="section">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Vendor</th>
+            <th>Order Date</th>
+            <th>Expected</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders(); track order.id) {
+            <tr>
+              <td><strong>{{ order.orderNumber }}</strong></td>
+              <td>{{ order.vendorName }}</td>
+              <td>{{ order.orderDate | date:'dd MMM yyyy' }}</td>
+              <td>
+                @if (order.expectedDate) {
+                  {{ order.expectedDate | date:'dd MMM yyyy' }}
+                } @else { - }
+              </td>
+              <td>₹{{ order.totalAmount | number:'1.2-2' }}</td>
+              <td>
+                <span [class]="'status-badge ' +
+                  getStatusClass(order.status)">
+                  {{ order.status }}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  @if (canConvert(order.status) &&
+                      hasPermission('invoices.create')) {
+                    <button class="btn-convert"
+                      (click)="convertToBill(order.id)"
+                      title="Convert to Purchase Bill">
+                      → Bill
+                    </button>
+                  }
+                  @if (order.status === 'Draft' &&
+                      hasPermission('invoices.approve')) {
+                    <button class="btn-send"
+                      (click)="updateStatus(order.id, 2)">
+                      Mark Sent
+                    </button>
+                  }
+                  @if (order.status !== 'Cancelled' &&
+                      order.status !== 'Received' &&
+                      hasPermission('invoices.approve')) {
+                    <button class="btn-cancel"
+                      (click)="updateStatus(order.id, 4)">
+                      Cancel
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (orders().length === 0) {
+        <div class="empty-state">
+          <p>No purchase orders yet.</p>
+          @if (hasPermission('invoices.create')) {
+            <button class="btn-primary"
+              (click)="router.navigate(['/purchase/orders/create'])">
+              Create First Order
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+}

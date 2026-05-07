@@ -121,3 +121,15 @@ button {
     }
   }
 }
+
+.error-alert {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #f87171;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 500;
+}

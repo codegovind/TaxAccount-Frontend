@@ -1,1 +1,64 @@
-<p>stock-list works!</p>
+<div class="page-header">
+  <div>
+    <h1>Inventory Status</h1>
+    <p>Monitor real-time stock levels and warehouse valuation</p>
+  </div>
+  <button class="btn-primary" (click)="router.navigate(['/stock/adjust'])">
+    + Adjust Stock
+  </button>
+</div>
+
+@if (isLoading()) {
+  <div class="loading">Loading inventory data...</div>
+}
+
+@if (!isLoading()) {
+  <!-- Total Valuation Summary -->
+  <div class="section" style="margin-bottom: 24px; background: #f0f4f8; border-left: 4px solid #1a237e; padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h3 style="margin: 0; color: #1a237e;">Total Warehouse Value (AS-2)</h3>
+        <small>Calculated at Lower of Cost or Market Value</small>
+      </div>
+      <h2 style="margin: 0; color: #1a237e;">₹{{ getTotalInventoryValue() | number:'1.2-2' }}</h2>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>SKU</th>
+            <th>Stock Level</th>
+            <th>Unit</th>
+            <th>Purchase Price</th>
+            <th>Market Value</th>
+            <th>Total Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of inventory(); track item.id) {
+            <tr>
+              <td><strong>{{ item.name }}</strong></td>
+              <td>{{ item.sku || '-' }}</td>
+              <td>
+                <span [style.color]="item.stock <= 0 ? '#d32f2f' : '#2e7d32'" style="font-weight: bold;">
+                  {{ item.stock }}
+                </span>
+              </td>
+              <td>{{ item.unit }}</td>
+              <td>₹{{ item.purchasePrice | number:'1.2-2' }}</td>
+              <td>₹{{ item.marketValue | number:'1.2-2' }}</td>
+              <td>₹{{ (item.closingStockValue || (item.stock * item.purchasePrice)) | number:'1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      @if (inventory().length === 0) {
+        <div class="empty-state">No inventory records found.</div>
+      }
+    </div>
+  </div>
+}

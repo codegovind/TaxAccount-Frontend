@@ -60,11 +60,16 @@ export class InvoiceCreateComponent implements OnInit {
   }
 
   loadContacts(): void {
-    this.contactService.getContacts().subscribe({
+    this.contactService.getCustomers().subscribe({
       next: (data) => this.contacts.set(data),
       error: (err) => console.error('Error loading contacts:', err)
     });
   }
+//   loadCustomers(): void {
+//   this.contactService.getCustomers().subscribe({
+//     next: (data) => this.customers.set(data)
+//   });
+// }
 
   get items(): FormArray {
     return this.invoiceForm.get('items') as FormArray;

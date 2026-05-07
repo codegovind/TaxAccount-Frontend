@@ -1,0 +1,197 @@
+@if (isLoading()) {
+  <div class="loading">Loading bill...</div>
+}
+
+@if (!isLoading() && bill()) {
+  <div class="page-header">
+    <div>
+      <div class="bill-title">
+        <h1>{{ bill()!.billNumber }}</h1>
+        <span [class]="'status-badge ' +
+          getStatusClass(bill()!.status)">
+          {{ bill()!.status }}
+        </span>
+      </div>
+      @if (bill()!.vendorBillNumber) {
+        <p>Vendor Bill: {{ bill()!.vendorBillNumber }}</p>
+      }
+    </div>
+    <div class="header-actions">
+      @if (bill()!.status === 'Draft' &&
+          hasPermission('invoices.approve')) {
+        <button class="btn-danger"
+          [disabled]="isDeleting()"
+          (click)="deleteBill()">
+          {{ isDeleting() ? 'Deleting...' : '🗑 Delete' }}
+        </button>
+      }
+      <button class="btn-secondary"
+        (click)="router.navigate(['/purchase'])">
+        ← Back
+      </button>
+    </div>
+  </div>
+
+  <!-- Bill Info -->
+  <div class="section">
+    <h2 class="section-title">Bill Information</h2>
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-label">Vendor</span>
+        <span class="info-value">{{ bill()!.vendorName }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Bill Date</span>
+        <span class="info-value">
+          {{ bill()!.billDate | date:'dd MMM yyyy' }}
+        </span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Due Date</span>
+        <span class="info-value">
+          @if (bill()!.dueDate) {
+            {{ bill()!.dueDate | date:'dd MMM yyyy' }}
+          } @else { Not set }
+        </span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Payment Method</span>
+        <span class="info-value">{{ bill()!.paymentMethod }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Created By</span>
+        <span class="info-value">{{ bill()!.createdByName }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Created At</span>
+        <span class="info-value">
+          {{ bill()!.createdAt | date:'dd MMM yyyy HH:mm' }}
+        </span>
+      </div>
+      @if (bill()!.notes) {
+        <div class="info-item full-width">
+          <span class="info-label">Notes</span>
+          <span class="info-value">{{ bill()!.notes }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Items -->
+  <div class="section">
+    <h2 class="section-title">Items</h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>HSN</th>
+            <th>Qty</th>
+            <th>Unit</th>
+            <th>Rate</th>
+            <th>Disc</th>
+            <th>Taxable</th>
+            <th>CGST</th>
+            <th>SGST</th>
+            <th>IGST</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of bill()!.items; track item.id) {
+            <tr>
+              <td>
+                <strong>{{ item.productName }}</strong>
+                @if (item.description !== item.productName) {
+                  <div class="text-muted">{{ item.description }}</div>
+                }
+              </td>
+              <td>{{ item.hsnCode || '-' }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.unit }}</td>
+              <td>₹{{ item.unitPrice | number:'1.2-2' }}</td>
+              <td>
+                @if (item.discountAmount > 0) {
+                  ₹{{ item.discountAmount | number:'1.2-2' }}
+                } @else { - }
+              </td>
+              <td>
+                ₹{{ (item.totalAmount - item.taxAmount) |
+                  number:'1.2-2' }}
+              </td>
+              <td>
+                @if (item.cgstAmount > 0) {
+                  {{ item.cgstPercent }}%
+                  (₹{{ item.cgstAmount | number:'1.2-2' }})
+                } @else { - }
+              </td>
+              <td>
+                @if (item.sgstAmount > 0) {
+                  {{ item.sgstPercent }}%
+                  (₹{{ item.sgstAmount | number:'1.2-2' }})
+                } @else { - }
+              </td>
+              <td>
+                @if (item.igstAmount > 0) {
+                  {{ item.igstPercent }}%
+                  (₹{{ item.igstAmount | number:'1.2-2' }})
+                } @else { - }
+              </td>
+              <td>
+                <strong>
+                  ₹{{ item.totalAmount | number:'1.2-2' }}
+                </strong>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- GST Summary + Totals -->
+    <div class="bill-footer">
+      <div class="gst-summary">
+        <h3>GST Summary</h3>
+        @if (getTotalCgst() > 0) {
+          <div class="gst-row">
+            <span>CGST</span>
+            <span>₹{{ getTotalCgst() | number:'1.2-2' }}</span>
+          </div>
+          <div class="gst-row">
+            <span>SGST</span>
+            <span>₹{{ getTotalSgst() | number:'1.2-2' }}</span>
+          </div>
+        }
+        @if (getTotalIgst() > 0) {
+          <div class="gst-row">
+            <span>IGST</span>
+            <span>₹{{ getTotalIgst() | number:'1.2-2' }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="totals">
+        <div class="total-row">
+          <span>Subtotal</span>
+          <span>₹{{ bill()!.subTotal | number:'1.2-2' }}</span>
+        </div>
+        @if (bill()!.discountAmount > 0) {
+          <div class="total-row">
+            <span>Discount</span>
+            <span class="text-red">
+              - ₹{{ bill()!.discountAmount | number:'1.2-2' }}
+            </span>
+          </div>
+        }
+        <div class="total-row">
+          <span>Tax (GST)</span>
+          <span>₹{{ bill()!.taxAmount | number:'1.2-2' }}</span>
+        </div>
+        <div class="total-row grand-total">
+          <span>Total</span>
+          <span>₹{{ bill()!.totalAmount | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+}

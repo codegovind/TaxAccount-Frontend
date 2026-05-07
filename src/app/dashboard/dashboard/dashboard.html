@@ -1,95 +1,152 @@
-<div class="app-layout">
+<!-- Zoho-Style Header -->
+<div class="zoho-page-header">
+  <div class="greeting-section">
+    <div class="company-logo-placeholder">
+      <!-- Dynamically grabs the first letter of the username and capitalizes it -->
+      <span>{{ userName() ? userName()[0].toUpperCase() : 'U' }}</span>
+    </div>
+    <div class="greeting-text">
+      <h1 style="text-transform: capitalize;">Hello, {{ userName() }}</h1>
+      <p>TaxAccount ERP</p>
+    </div>
+  </div>
+</div>
 
- <main class="main-content"> 
-    <div class="page-header">
-      <h1>Dashboard</h1>
-      <p>Welcome back, {{ userName() }}!</p>
+<!-- Zoho-Style Tabs -->
+<div class="zoho-tabs">
+  <a href="javascript:void(0)" class="active">Dashboard</a>
+  <a href="javascript:void(0)">Fiscal Year-End Tasks</a>
+  <a href="javascript:void(0)">Getting Started <span class="dropdown-arrow">⌄</span></a>
+</div>
+
+@if (isLoading()) {
+  <div class="loading-state">Loading your business metrics...</div>
+}
+
+@if (!isLoading()) {
+  <div class="dashboard-content">
+    
+    <!-- Top Row: Revenue & Invoice Pipeline Grid -->
+    <div class="zoho-grid-2">
+      
+      <!-- Revenue Card (Left) -->
+      <div class="zoho-card">
+        <div class="card-header">
+          <h3>Total Revenue</h3>
+          <button class="btn-new" (click)="router.navigate(['/invoices/create'])">＋ New</button>
+        </div>
+        <div class="card-body">
+          <p class="sub-label">Total Realized Revenue</p>
+          <h2 class="amount">₹{{ (dashboardData()?.totalRevenue || 0) | number:'1.2-2' }}</h2>
+          
+          <div class="progress-track">
+            <div class="progress-fill current"></div>
+          </div>
+          
+          <div class="card-legend">
+            <div class="legend-item">
+              <span class="dot blue"></span> Current : ₹{{ (dashboardData()?.totalRevenue || 0) | number:'1.2-2' }}
+            </div>
+            <div class="legend-item">
+              <span class="dot orange"></span> Overdue : ₹0.00 ▾
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invoice Pipeline Card (Right - Uses your real C# data) -->
+      <div class="zoho-card">
+        <div class="card-header">
+          <h3>Invoice Pipeline</h3>
+          <button class="btn-new" (click)="router.navigate(['/invoices'])">View All</button>
+        </div>
+        <div class="card-body">
+          <p class="sub-label">Total Generated Invoices</p>
+          <h2 class="amount">{{ dashboardData()?.totalInvoices || 0 }} <span style="font-size: 0.5em; color: #888;">invoices</span></h2>
+          
+          <div class="progress-track">
+            <!-- Orange progress bar for pending items -->
+            <div class="progress-fill payable" style="width: 70%; background-color: #f59e0b;"></div> 
+          </div>
+          
+          <div class="card-legend">
+            <div class="legend-item">
+              <span class="dot orange"></span> Pending/Sent : {{ dashboardData()?.pendingInvoices || 0 }}
+            </div>
+            <div class="legend-item">
+              <span class="dot" style="background: #999;"></span> Drafts : {{ dashboardData()?.draftInvoices || 0 }}
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    @if (isLoading()) {
-      <div class="loading">Loading dashboard...</div>
-    }
-
-    @if (!isLoading() && dashboardData()) {
-      <div class="cards-grid">
-        <div class="card card-blue">
-          <div class="card-icon">🧾</div>
-          <div class="card-info">
-            <div class="card-value">{{ dashboardData()!.totalInvoices }}</div>
-            <div class="card-label">Total Invoices</div>
-          </div>
+    <!-- Middle Row: Cash Flow Chart Mockup -->
+    <div class="zoho-card full-width mt-4">
+      <div class="card-header">
+        <h3>Cash Flow</h3>
+        <select class="zoho-select">
+          <option>This Fiscal Year</option>
+        </select>
+      </div>
+      <div class="card-body chart-placeholder-area">
+        <div class="chart-y-axis">
+          <span>5 K</span><span>4 K</span><span>3 K</span><span>2 K</span><span>1 K</span><span>0</span>
         </div>
-
-        <div class="card card-green">
-          <div class="card-icon">💰</div>
-          <div class="card-info">
-            <div class="card-value">
-              ₹{{ dashboardData()!.totalRevenue | number:'1.2-2' }}
-            </div>
-            <div class="card-label">Total Revenue</div>
-          </div>
+        <div class="chart-grid">
+          <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
+          <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
         </div>
-
-        <div class="card card-orange">
-          <div class="card-icon">⏳</div>
-          <div class="card-info">
-            <div class="card-value">{{ dashboardData()!.pendingInvoices }}</div>
-            <div class="card-label">Pending Invoices</div>
-          </div>
+        <div class="chart-x-axis">
+          <span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span>
         </div>
-
-        <div class="card card-purple">
-          <div class="card-icon">👥</div>
-          <div class="card-info">
-            <div class="card-value">{{ dashboardData()!.totalUsers }}</div>
-            <div class="card-label">Total Users</div>
-          </div>
+        <div class="empty-chart-text">
+          <p>No Cash Flow data recorded for this fiscal year</p>
         </div>
       </div>
+    </div>
 
-      <div class="section">
-        <div class="section-header">
-          <h2>Recent Invoices</h2>
-          <button class="btn-primary" (click)="navigateTo('/invoices')">
-            View All
-          </button>
-        </div>
-
-        <div class="table-container">
-          <table>
-            <thead>
+    <!-- Bottom Row: Recent Activity -->
+    <div class="zoho-card full-width mt-4">
+      <div class="card-header">
+        <h3>Recent Invoices</h3>
+      </div>
+      <div class="card-body" style="padding: 0;">
+        <table class="zoho-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Invoice #</th>
+              <th>Customer Name</th>
+              <th>Status</th>
+              <th style="text-align: right;">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (inv of dashboardData()?.recentInvoices || []; track inv.id) {
               <tr>
-                <th>Invoice #</th>
-                <th>Customer</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Date</th>
+                <td>{{ inv.invoiceDate | date:'dd MMM yyyy' }}</td>
+                <td><a href="javascript:void(0)" class="text-link">{{ inv.invoiceNumber }}</a></td>
+                <!-- Fixed to customerName to match your C# JSON payload -->
+                <td>{{ inv.contactName }}</td> 
+                <td>
+                  <span class="zoho-status" [ngClass]="getStatusClass(inv.status)">
+                    {{ getStatusText(inv.status) }}
+                  </span>
+                </td>
+                <td style="text-align: right;">₹{{ inv.totalAmount | number:'1.2-2' }}</td>
               </tr>
-            </thead>
-            <tbody>
-              @for (invoice of dashboardData()!.recentInvoices; track invoice.id) {
-                <tr>
-                  <td>{{ invoice.invoiceNumber }}</td>
-                  <td>{{ invoice.contactName || 'Cash Sale' }}</td>
-                  <td>₹{{ invoice.totalAmount | number:'1.2-2' }}</td>
-                  <td>
-                    <span [class]="'status-badge ' + getStatusClass(invoice.status)">
-                      {{ getStatusText(invoice.status) }}
-                    </span>
-                  </td>
-                  <td>{{ invoice.invoiceDate | date:'dd MMM yyyy' }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-
-          @if (dashboardData()!.recentInvoices.length === 0) {
-            <div class="empty-state">
-              No invoices yet. Create your first invoice!
-            </div>
-          }
-        </div>
+            }
+          </tbody>
+        </table>
+        @if (!dashboardData()?.recentInvoices || dashboardData()!.recentInvoices.length === 0) {
+          <div class="zoho-empty-state">
+            <p>No recent activity found.</p>
+          </div>
+        }
       </div>
-    }
-   </main>
-</div>
+    </div>
+
+  </div>
+}

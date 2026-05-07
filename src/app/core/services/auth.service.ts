@@ -41,7 +41,26 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    //return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false; // No token at all
+
+    // Use your existing decode method to read the JWT payload
+    const decoded: any = this.decodeToken(token); 
+    
+    // JWTs contain an 'exp' (expiration) claim in seconds
+    if (decoded && decoded.exp) {
+      // Convert seconds to milliseconds to compare with JavaScript's Date.now()
+      const isExpired = (decoded.exp * 1000) < Date.now();
+      
+      if (isExpired) {
+        console.warn('Token is expired! Cleaning up storage...');
+        this.logout(); // Automatically delete the dead token
+        return false;  // Tell the guard they are NOT logged in
+      }
+    }
+
+    return true; // Token exists and is not expired
   }
 
   // --- NEW: Token Handling Logic ---

@@ -1,0 +1,168 @@
+@if (showVendorModal()) {
+  <app-quick-add-vendor
+    (vendorCreated)="onVendorCreated($event)"
+    (cancelled)="showVendorModal.set(false)">
+  </app-quick-add-vendor>
+}
+
+@if (showProductModal()) {
+  <app-quick-add-product
+    (productCreated)="onProductCreated($event)"
+    (cancelled)="showProductModal.set(false)">
+  </app-quick-add-product>
+}
+
+<div class="page-header">
+  <div>
+    <h1>New Purchase Order</h1>
+    <p>Create order to send to vendor</p>
+  </div>
+  <button class="btn-secondary"
+    (click)="router.navigate(['/purchase/orders'])">
+    ← Back
+  </button>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+  <div class="section">
+    <h2 class="section-title">Order Details</h2>
+
+    <div class="vendor-row">
+      <div class="form-group flex-1">
+        <label>Vendor</label>
+        <div class="select-row">
+          <select formControlName="contactId">
+            <option [value]="null">Select vendor (optional)</option>
+            @for (vendor of vendors(); track vendor.id) {
+              <option [value]="vendor.id">
+                {{ vendor.name }}
+                @if (vendor.gstin) { ({{ vendor.gstin }}) }
+              </option>
+            }
+          </select>
+          <button type="button" class="btn-add-inline"
+            (click)="openVendorModal()">
+            + New Vendor
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Order Date *</label>
+        <input type="date" formControlName="orderDate"/>
+      </div>
+      <div class="form-group">
+        <label>Expected Delivery</label>
+        <input type="date" formControlName="expectedDate"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea formControlName="notes"
+        placeholder="Special instructions for vendor..."
+        rows="2"></textarea>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">Items</h2>
+      <button type="button" class="btn-add"
+        (click)="addItem()">+ Add Item</button>
+    </div>
+
+    <div class="items-header">
+      <span class="col-product">Product</span>
+      <span class="col-qty">Qty</span>
+      <span class="col-price">Rate</span>
+      <span class="col-disc">Disc %</span>
+      <span class="col-gst">GST %</span>
+      <span class="col-total">Amount</span>
+      <span class="col-action"></span>
+    </div>
+
+    <div formArrayName="items">
+      @for (item of items.controls; track $index) {
+        <div [formGroupName]="$index" class="item-row">
+          <div class="col-product">
+            <div class="product-select-wrap">
+              <select formControlName="productId"
+                (change)="onProductChange($index)">
+                <option value="">Select product</option>
+                @for (p of products(); track p.id) {
+                  <option [value]="p.id">{{ p.name }}</option>
+                }
+              </select>
+              <button type="button" class="btn-inline-add"
+                title="Add new product"
+                (click)="openProductModal($index)">+</button>
+            </div>
+            <input type="text" formControlName="description"
+              placeholder="Description" class="desc-input"/>
+          </div>
+          <div class="col-qty">
+            <input type="number" formControlName="quantity"
+              min="0.01" step="0.01"/>
+          </div>
+          <div class="col-price">
+            <input type="number" formControlName="unitPrice"
+              min="0" step="0.01"/>
+          </div>
+          <div class="col-disc">
+            <input type="number" formControlName="discountPercent"
+              min="0" max="100"/>
+          </div>
+          <div class="col-gst">
+            <input type="number" formControlName="taxPercent"
+              min="0" max="100"/>
+          </div>
+          <div class="col-total">
+            <strong>
+              ₹{{ getItemTotal($index) | number:'1.2-2' }}
+            </strong>
+          </div>
+          <div class="col-action">
+            @if (items.length > 1) {
+              <button type="button" class="btn-remove"
+                (click)="removeItem($index)">✕</button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="totals">
+      <div class="total-row">
+        <span>Subtotal</span>
+        <span>₹{{ getSubTotal() | number:'1.2-2' }}</span>
+      </div>
+      <div class="total-row">
+        <span>Tax (GST)</span>
+        <span>₹{{ getTotalTax() | number:'1.2-2' }}</span>
+      </div>
+      <div class="total-row grand-total">
+        <span>Total</span>
+        <span>₹{{ getGrandTotal() | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="error-banner">{{ errorMessage() }}</div>
+  }
+
+  <div class="form-actions">
+    <button type="button" class="btn-secondary"
+      (click)="router.navigate(['/purchase/orders'])">
+      Cancel
+    </button>
+    <button type="submit" class="btn-primary"
+      [disabled]="form.invalid || isSubmitting()">
+      {{ isSubmitting() ? 'Creating...' : 'Create Order' }}
+    </button>
+  </div>
+</form>

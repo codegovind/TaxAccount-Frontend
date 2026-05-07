@@ -1,1 +1,132 @@
-<p>contact-create works!</p>
+<div class="page-header">
+  <div>
+    <h1>{{ isEditMode() ? 'Edit Contact' : 'Add Contact' }}</h1>
+    <p>{{ isEditMode() ?
+      'Update contact details' :
+      'Add customer, vendor or both' }}
+    </p>
+  </div>
+  <button class="btn-secondary"
+    (click)="router.navigate(['/contacts'])">
+    ← Back
+  </button>
+</div>
+
+@if (isLoading()) {
+  <div class="loading">Loading...</div>
+}
+
+@if (!isLoading()) {
+  <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+
+    <div class="section">
+      <h2 class="section-title">Basic Information</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Name *</label>
+          <input type="text" formControlName="name"
+            placeholder="Company or person name"/>
+          @if (f['name'].invalid && f['name'].touched) {
+            <span class="error-text">Name is required</span>
+          }
+        </div>
+        <div class="form-group">
+          <label>Contact Type *</label>
+          <select formControlName="contactType">
+            <option [value]="1">Customer</option>
+            <option [value]="2">Vendor</option>
+            <option [value]="3">Both</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="text" formControlName="phone"
+          placeholder="Mobile or landline"/>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">GST Information</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>GST Type *</label>
+          <select formControlName="gstType">
+            <option [value]="1">Registered</option>
+            <option [value]="2">Unregistered</option>
+            <option [value]="3">Composition</option>
+            <option [value]="4">Consumer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>GSTIN</label>
+          <input type="text" formControlName="gstin"
+            placeholder="e.g. 27AAPFU0939F1ZV"
+            maxlength="15"
+            style="text-transform: uppercase"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Address</h2>
+      <div class="form-group">
+        <label>Address</label>
+        <textarea formControlName="address"
+          placeholder="Street address..."
+          rows="2"></textarea>
+      </div>
+      <div class="form-row form-row-3">
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" formControlName="city"
+            placeholder="City"/>
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <select formControlName="state">
+            <option value="">Select state</option>
+            @for (state of indianStates; track state) {
+              <option [value]="state">{{ state }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label>PIN Code</label>
+          <input type="text" formControlName="pinCode"
+            placeholder="6 digit PIN"
+            maxlength="6"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Financial</h2>
+      <div class="form-group half">
+        <label>Opening Balance (₹)</label>
+        <input type="number" formControlName="openingBalance"
+          step="0.01"/>
+        <small class="hint">
+          Positive = receivable, Negative = payable
+        </small>
+      </div>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary"
+        (click)="router.navigate(['/contacts'])">
+        Cancel
+      </button>
+      <button type="submit" class="btn-primary"
+        [disabled]="contactForm.invalid || isSubmitting()">
+        {{ isSubmitting() ? 'Saving...' :
+          (isEditMode() ? 'Update Contact' : 'Add Contact') }}
+      </button>
+    </div>
+
+  </form>
+}

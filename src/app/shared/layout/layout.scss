@@ -1,68 +1,124 @@
 .app-layout {
   display: flex;
-  min-height: 100vh;
-  background: #f5f7fa;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #f9f9fb;
 }
 
-.mobile-header {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* --- THE TOP HEADER FIX --- */
+.top-header {
   height: 60px;
-  background: #1a237e;
-  color: white;
+  background: white;
+  border-bottom: 1px solid #eef0f4;
+  display: flex;
   align-items: center;
-  padding: 0 16px;
-  gap: 16px;
-  z-index: 999;
+  justify-content: space-between; /* This forces left and right apart */
+  padding: 0 24px;
+}
 
-  h2 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 700;
+.header-left .search-container {
+  display: flex;
+  align-items: center;
+  background: #f3f4f6;
+  border-radius: 6px;
+  padding: 6px 12px;
+  width: 300px;
+
+  .global-search {
+    border: none;
+    background: transparent;
+    outline: none;
+    padding-left: 8px;
+    width: 100%;
   }
+}
 
-  @media (max-width: 768px) {
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Adds space between icons */
+
+  .tenant-name { font-weight: 500; color: #333; }
+
+  .btn-icon {
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    
+    &.btn-primary {
+      background: #407bff;
+      color: white;
+    }
+    &.rounded-circle { border-radius: 50%; }
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
   }
 }
 
-.hamburger {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 8px;
+.page-container {
+  flex: 1;
+  padding: 24px 32px;
+  overflow-y: auto;
 }
 
-.sidebar-overlay {
-  display: none;
+/* --- Mobile Overlay Backdrop --- */
+.mobile-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 998;
-
-  &.active {
-    display: block;
-  }
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 999; /* Must be just below the sidebar's 1000 */
+  backdrop-filter: blur(2px);
 }
 
-.main-content {
-  //margin-left: 260px;
-  flex: 1;
-  padding: 32px;
-  transition: margin-left 0.3s ease;
-  min-width: 0;
+/* --- Mobile Header Button --- */
+.mobile-toggle-btn {
+  display: none; /* Hidden by default on desktop */
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #333;
+  margin-right: 15px;
+  cursor: pointer;
+}
 
-  @media (max-width: 768px) {
-    margin-left: 0;
-    padding: 16px;
-    padding-top: 70px;
+/* --- Mobile Responsive Rules --- */
+@media (max-width: 768px) {
+  .mobile-toggle-btn {
+    display: block; /* Show the button on phones */
+  }
+  
+  .search-container {
+    display: none !important; /* Hide search bar on phones to save space */
+  }
+
+  .top-header {
+    padding: 0 15px; /* Reduce padding on phones */
   }
 }
