@@ -55,6 +55,8 @@ export interface FinancialStatementItem {
   amount: number;
   isHeader: boolean;
   parentId?: number;
+  type: string; // Asset, Liability, Equity, Income, Expense
+  name: string; // For grouping display
 }
 
 export interface FinancialStatement {

@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AccountingService, FinancialStatement } from '../../../core/services/accounting.service';
+import { FilterByTypePipe } from '../../../shared/pipes/filter-by-type.pipe';
 
 @Component({
   selector: 'app-balance-sheet',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FilterByTypePipe],
   templateUrl: './balance-sheet.component.html',
   styles: []
 })
