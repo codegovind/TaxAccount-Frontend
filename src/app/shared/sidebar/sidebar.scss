@@ -106,6 +106,12 @@
     width: 24px;
     text-align: center;
   }
+  
+  .arrow {
+    margin-left: auto;
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+  }
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
@@ -134,5 +140,32 @@
     &.mobile-open { left: 0; }
     &.collapsed { width: 240px; }
     .toggle-btn { display: none; }
+  }
+}
+/* Submenu styles for nested navigation */
+.nav-group {
+  .submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.2);
+    
+    .child-item {
+      padding-left: 50px;
+      font-size: 0.85rem;
+      
+      .icon {
+        display: none;
+      }
+    }
+  }
+  
+  &:hover .submenu,
+  &.expanded .submenu {
+    max-height: 500px;
+  }
+  
+  .has-children:hover .arrow {
+    transform: rotate(180deg);
   }
 }

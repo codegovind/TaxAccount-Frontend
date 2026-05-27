@@ -85,16 +85,35 @@ export class SidebarComponent implements OnInit {
   userRole = signal('');
   companyName = signal('TaxAccount'); // Default fallback
 
-   menuItems = [
+  menuItems = [
     { title: 'Dashboard', path: '/dashboard', icon: '📊' },
     { title: 'Sales Invoices', path: '/invoices', icon: '🧾' },
-    //{ title: 'Purchase Bills', path: '/purchases', icon: '🛒' },
     { title: 'Purchase Bills',path: '/purchase', icon: '🛒' },
     { title: 'Products', path: '/products', icon: '📦' },
     { title: 'Contacts', path: '/contacts', icon: '👥' },
     { title: 'Stock Adjustment', path: '/stock', icon: '⚖️' },
-    //{ title: 'Purchase Bills',path: '/purchase', icon: '🛒', permission: 'invoices.view' },
-    { title: 'Company Settings', path: '/settings/profile', icon: '⚙️' }
+    { 
+      title: 'Accounting', 
+      path: '/accounting', 
+      icon: '📒',
+      children: [
+        { title: 'Chart of Accounts', path: '/accounting/chart-of-accounts' },
+        { title: 'General Ledger', path: '/accounting/general-ledger' },
+        { title: 'Trial Balance', path: '/accounting/trial-balance' },
+        { title: 'Profit & Loss', path: '/accounting/profit-loss' },
+        { title: 'Balance Sheet', path: '/accounting/balance-sheet' }
+      ]
+    },
+    { title: 'E-Way Bill', path: '/compliance/ewaybill', icon: '🚚' },
+    { 
+      title: 'Settings', 
+      path: '/settings', 
+      icon: '⚙️',
+      children: [
+        { title: 'Company Settings', path: '/settings/company' },
+        { title: 'Feature Toggles', path: '/settings/features' }
+      ]
+    }
   ];
 
   private authService = inject(AuthService);
