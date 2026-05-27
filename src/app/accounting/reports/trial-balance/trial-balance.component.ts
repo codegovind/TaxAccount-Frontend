@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AccountingService, TrialBalanceItem } from '../../core/services/accounting.service';
+import { AccountingService } from '../../accounting.service';
 
 @Component({
   selector: 'app-trial-balance',
@@ -10,7 +10,7 @@ import { AccountingService, TrialBalanceItem } from '../../core/services/account
   template: `
     <div class="p-4">
       <h2 class="text-2xl font-bold mb-4">Trial Balance</h2>
-      
+
       <div class="mb-4 flex gap-4">
         <div>
           <label class="block text-sm font-medium">From Date</label>
@@ -28,7 +28,7 @@ import { AccountingService, TrialBalanceItem } from '../../core/services/account
       </div>
 
       <div *ngIf="loading" class="text-center py-8">Loading...</div>
-      
+
       <div *ngIf="!loading && items.length > 0" class="overflow-x-auto">
         <table class="min-w-full bg-white border">
           <thead class="bg-gray-100">
@@ -47,12 +47,12 @@ import { AccountingService, TrialBalanceItem } from '../../core/services/account
             <tr *ngFor="let item of items" class="hover:bg-gray-50">
               <td class="px-4 py-2 border">{{ item.accountCode }}</td>
               <td class="px-4 py-2 border">{{ item.accountName }}</td>
-              <td class="px-4 py-2 border text-right">{{ item.openingDebit | currency:'INR' }}</td>
-              <td class="px-4 py-2 border text-right">{{ item.openingCredit | currency:'INR' }}</td>
-              <td class="px-4 py-2 border text-right">{{ item.currentDebit | currency:'INR' }}</td>
-              <td class="px-4 py-2 border text-right">{{ item.currentCredit | currency:'INR' }}</td>
-              <td class="px-4 py-2 border text-right font-semibold">{{ item.closingDebit | currency:'INR' }}</td>
-              <td class="px-4 py-2 border text-right font-semibold">{{ item.closingCredit | currency:'INR' }}</td>
+              <td class="px-4 py-2 border text-right">{{ item.openingDebit | currency:'INR':'symbol':'1.2-2' }}</td>
+              <td class="px-4 py-2 border text-right">{{ item.openingCredit | currency:'INR':'symbol':'1.2-2' }}</td>
+              <td class="px-4 py-2 border text-right">{{ item.currentDebit | currency:'INR':'symbol':'1.2-2' }}</td>
+              <td class="px-4 py-2 border text-right">{{ item.currentCredit | currency:'INR':'symbol':'1.2-2' }}</td>
+              <td class="px-4 py-2 border text-right font-semibold">{{ item.closingDebit | currency:'INR':'symbol':'1.2-2' }}</td>
+              <td class="px-4 py-2 border text-right font-semibold">{{ item.closingCredit | currency:'INR':'symbol':'1.2-2' }}</td>
             </tr>
           </tbody>
           <tfoot class="bg-gray-100 font-bold">
@@ -62,8 +62,8 @@ import { AccountingService, TrialBalanceItem } from '../../core/services/account
               <td class="px-4 py-2 border text-right"></td>
               <td class="px-4 py-2 border text-right"></td>
               <td class="px-4 py-2 border text-right"></td>
-              <td class="px-4 py-2 border text-right">{{ totalDebit | currency:'INR' }}</td>
-              <td class="px-4 py-2 border text-right">{{ totalCredit | currency:'INR' }}</td>
+              <td class="px-4 py-2 border text-right">{{ totalDebit | currency:'INR':'symbol':'1.2-2' }}</td>
+              <td class="px-4 py-2 border text-right">{{ totalCredit | currency:'INR':'symbol':'1.2-2' }}</td>
             </tr>
           </tfoot>
         </table>
@@ -79,7 +79,7 @@ import { AccountingService, TrialBalanceItem } from '../../core/services/account
 export class TrialBalanceComponent implements OnInit {
   fromDate: string = '';
   toDate: string = '';
-  items: TrialBalanceItem[] = [];
+  items: any[] = [];
   totalDebit: number = 0;
   totalCredit: number = 0;
   loading: boolean = false;
@@ -95,16 +95,16 @@ export class TrialBalanceComponent implements OnInit {
 
   loadTrialBalance(): void {
     if (!this.fromDate || !this.toDate) return;
-    
+
     this.loading = true;
     this.accountingService.getTrialBalance(this.fromDate, this.toDate).subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.items = data.items;
         this.totalDebit = data.totalDebit;
         this.totalCredit = data.totalCredit;
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error loading trial balance', err);
         this.loading = false;
       }

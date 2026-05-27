@@ -92,11 +92,11 @@ export class GeneralLedgerComponent implements OnInit {
 
   loadLedger() {
     this.accountingService.getGeneralLedger(this.fromDate, this.toDate).subscribe({
-      next: (data) => {
+      next: (data: LedgerEntry[]) => {
         this.ledgerEntries.set(data);
         this.runningBalance = 0;
       },
-      error: (err) => console.error('Error loading ledger', err)
+      error: (err: any) => console.error('Error loading ledger', err)
     });
   }
 

@@ -8,7 +8,7 @@ import { AccountHead, CreateAccountHead, LedgerEntry, TrialBalance, FinancialSta
 })
 export class AccountingService {
   private apiUrl = `${environment.apiUrl}/accounting`;
-  
+
   chartOfAccounts = signal<AccountHead[]>([]);
 
   constructor(private http: HttpClient) {}
@@ -25,18 +25,26 @@ export class AccountingService {
     return this.http.post<LedgerEntry>(`${this.apiUrl}/ledger`, entry);
   }
 
-  getTrialBalance(fromDate: Date, toDate: Date) {
-    const params = { 
-      fromDate: fromDate.toISOString().split('T')[0], 
-      toDate: toDate.toISOString().split('T')[0] 
+  getGeneralLedger(fromDate: string, toDate: string) {
+    const params = {
+      fromDate: fromDate,
+      toDate: toDate
     };
-    return this.http.get<TrialBalance[]>(`${this.apiUrl}/trial-balance`, { params });
+    return this.http.get<LedgerEntry[]>(`${this.apiUrl}/general-ledger`, { params });
+  }
+
+  getTrialBalance(fromDate: string, toDate: string) {
+    const params = {
+      fromDate: fromDate,
+      toDate: toDate
+    };
+    return this.http.get<any>(`${this.apiUrl}/trial-balance`, { params });
   }
 
   getProfitLoss(fromDate: Date, toDate: Date) {
-    const params = { 
-      fromDate: fromDate.toISOString().split('T')[0], 
-      toDate: toDate.toISOString().split('T')[0] 
+    const params = {
+      fromDate: fromDate.toISOString().split('T')[0],
+      toDate: toDate.toISOString().split('T')[0]
     };
     return this.http.get<FinancialStatement[]>(`${this.apiUrl}/profit-loss`, { params });
   }
