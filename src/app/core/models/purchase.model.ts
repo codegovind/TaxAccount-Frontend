@@ -53,7 +53,6 @@ export interface PurchaseBillResponseDto {
   vendorBillNumber: string;
   billDate: Date;
   dueDate?: Date;
-  status: string;
   paymentMethod: string;
   contactId?: number;
   vendorName: string;

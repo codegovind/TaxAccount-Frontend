@@ -27,7 +27,6 @@
                 <th>Date</th>
                 <th>Due Date</th>
                 <th>Amount</th>
-                <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -39,11 +38,6 @@
                   <td>{{ invoice.invoiceDate | date:'dd MMM yyyy' }}</td>
                   <td>{{ invoice.dueDate | date:'dd MMM yyyy' }}</td>
                   <td>₹{{ invoice.totalAmount | number:'1.2-2' }}</td>
-                  <td>
-                    <span [class]="'status-badge ' + getStatusClass(invoice.status)">
-                      {{ getStatusText(invoice.status) }}
-                    </span>
-                  </td>
                   <td>
                     <button class="btn-view" (click)="viewInvoice(invoice.id)">
                       View

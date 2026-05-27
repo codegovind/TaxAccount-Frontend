@@ -10,9 +10,6 @@
       <div class="page-header">
         <div>
           <h1>{{ invoice()!.invoiceNumber }}</h1>
-          <span [class]="'status-badge ' + getStatusClass(invoice()!.status)">
-            {{ getStatusText(invoice()!.status) }}
-          </span>
         </div>
         <button class="btn-secondary" (click)="navigateTo('/invoices')">
           ← Back
@@ -102,23 +99,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Update Status -->
-      @if (hasPermission('invoices.approve')) {
-        <div class="section">
-          <h2 class="section-title">Update Status</h2>
-          <div class="status-buttons">
-            @for (option of statusOptions; track option.value) {
-              <button
-                [class]="'status-btn status-btn-' + option.label.toLowerCase()"
-                [disabled]="invoice()!.status === option.value || isUpdating()"
-                (click)="updateStatus(option.value)">
-                {{ option.label }}
-              </button>
-            }
-          </div>
-        </div>
-      }
     }
    </main>
 </div>

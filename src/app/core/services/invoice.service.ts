@@ -24,11 +24,6 @@ export class InvoiceService {
     return this.http.post<InvoiceResponse>(this.apiUrl, dto);
   }
 
-  updateStatus(id: number, status: number): Observable<InvoiceResponse> {
-    return this.http.patch<InvoiceResponse>(
-      `${this.apiUrl}/${id}/status`, { status });
-  }
-
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }

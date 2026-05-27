@@ -52,33 +52,6 @@ export class InvoiceListComponent implements OnInit {
     this.router.navigate(['/invoices', id]);
   }
 
-  // logout(): void {
-  //   this.authService.logout();
-  //   this.router.navigate(['/auth/login']);
-  // }
-
-  // --- Replace the old getStatusClass with these ---
-
-  getStatusClass(statusEnum: number): string {
-    switch (statusEnum) {
-      case 3: return 'status-paid';
-      case 2: return 'status-sent';
-      case 1: return 'status-draft';
-      case 4: return 'status-cancelled';
-      default: return '';
-    }
-  }
-
-  getStatusText(statusEnum: number): string {
-    switch (statusEnum) {
-      case 3: return 'Paid';
-      case 2: return 'Sent';
-      case 1: return 'Draft';
-      case 4: return 'Cancelled';
-      default: return 'Unknown';
-    }
-  }
-
   hasPermission(permission: string): boolean {
     return this.authService.hasPermission(permission);
   }

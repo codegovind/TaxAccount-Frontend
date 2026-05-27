@@ -128,13 +128,7 @@
               <tr>
                 <td>{{ inv.invoiceDate | date:'dd MMM yyyy' }}</td>
                 <td><a href="javascript:void(0)" class="text-link">{{ inv.invoiceNumber }}</a></td>
-                <!-- Fixed to customerName to match your C# JSON payload -->
                 <td>{{ inv.contactName }}</td> 
-                <td>
-                  <span class="zoho-status" [ngClass]="getStatusClass(inv.status)">
-                    {{ getStatusText(inv.status) }}
-                  </span>
-                </td>
                 <td style="text-align: right;">₹{{ inv.totalAmount | number:'1.2-2' }}</td>
               </tr>
             }

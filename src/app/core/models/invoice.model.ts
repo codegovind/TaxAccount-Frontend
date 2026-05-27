@@ -16,13 +16,6 @@ export enum EntrySource {
   ComplianceOnly = 2 // E-Way Bill addon
 }
 
-export enum InvoiceStatus {
-  Draft = 1,
-  Sent = 2,
-  Paid = 3,
-  Cancelled = 4
-}
-
 // ─── 1. CREATION DTOs (Data sent TO the API) ───
 
 export interface CreateInvoiceItemDto {
@@ -86,7 +79,6 @@ export interface InvoiceResponse {
   entrySource: EntrySource;
   invoiceDate: string | Date;
   dueDate: string | Date;
-  status: InvoiceStatus; // Using the enum now instead of a raw string
   
   // NEW: Updated to Contact logic
   contactId?: number | null;

@@ -15,16 +15,7 @@ import { InvoiceResponse } from '../../core/models/invoice.model';
 export class InvoiceDetailComponent implements OnInit {
   invoice = signal<InvoiceResponse | null>(null);
   isLoading = signal(true);
-  isUpdating = signal(false);
   userName = signal('');
-  //userRole = signal('');
-
-  statusOptions = [
-    { value: 1, label: 'Draft' },
-    { value: 2, label: 'Sent' },
-    { value: 3, label: 'Paid' },
-    { value: 4, label: 'Cancelled' }
-  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -36,7 +27,6 @@ export class InvoiceDetailComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
     this.userName.set(user?.email || '');
-    //this.userRole.set(user?.role || '');
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) this.loadInvoice(+id);
@@ -53,40 +43,6 @@ export class InvoiceDetailComponent implements OnInit {
         this.router.navigate(['/invoices']);
       }
     });
-  }
-
-  updateStatus(status: number): void {
-    const inv = this.invoice();
-    if (!inv) return;
-
-    this.isUpdating.set(true);
-    this.invoiceService.updateStatus(inv.id, status).subscribe({
-      next: (updated) => {
-        this.invoice.set(updated);
-        this.isUpdating.set(false);
-      },
-      error: () => this.isUpdating.set(false)
-    });
-  }
-
-  getStatusClass(statusEnum: number): string {
-    switch (statusEnum) {
-      case 3: return 'status-paid';
-      case 2: return 'status-sent';
-      case 1: return 'status-draft';
-      case 4: return 'status-cancelled';
-      default: return '';
-    }
-  }
-
-  getStatusText(statusEnum: number): string {
-    switch (statusEnum) {
-      case 3: return 'Paid';
-      case 2: return 'Sent';
-      case 1: return 'Draft';
-      case 4: return 'Cancelled';
-      default: return 'Unknown';
-    }
   }
 
   hasPermission(permission: string): boolean {

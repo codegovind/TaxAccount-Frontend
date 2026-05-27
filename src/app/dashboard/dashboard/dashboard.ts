@@ -163,22 +163,21 @@ export class DashboardComponent implements OnInit {
   loadDashboard(): void {
     this.homeService.getDashboard().subscribe({
       next: (data) => {
-        // this.dashboardData.set(data);
-        // this.isLoading.set(false);
         if (data) {
           this.dashboardData.set(data);
         } else {
-          this.setMockDataFallback(); // Use fallback if API returns empty
+          this.setMockDataFallback();
         }
         this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Dashboard API Error - Backend might be offline:', err);
-        this.setMockDataFallback(); // Show fake data instead of a broken UI
+        this.setMockDataFallback();
         this.isLoading.set(false);
       }
     });
   }
+  
   setMockDataFallback(): void {
     this.dashboardData.set({
       totalInvoices: 125,
@@ -188,29 +187,9 @@ export class DashboardComponent implements OnInit {
       pendingInvoices: 12,
       draftInvoices: 5,
       recentInvoices: [
-        { id: 1, invoiceNumber: 'INV-0001', contactName: 'Acme Corp', invoiceDate: new Date(), totalAmount: 45000, status: 3 },
-        { id: 2, invoiceNumber: 'INV-0002', contactName: 'TechFlow', invoiceDate: new Date(), totalAmount: 12500, status: 2 },
+        { id: 1, invoiceNumber: 'INV-0001', contactName: 'Acme Corp', invoiceDate: new Date(), totalAmount: 45000 },
+        { id: 2, invoiceNumber: 'INV-0002', contactName: 'TechFlow', invoiceDate: new Date(), totalAmount: 12500 },
       ]
     });
-  }
-
-  getStatusClass(statusEnum: number): string {
-    switch (statusEnum) {
-      case 3: return 'paid'; 
-      case 2: return 'sent';
-      case 1: return 'draft';
-      case 4: return 'cancelled';
-      default: return '';
-    }
-  }
-
-  getStatusText(statusEnum: number): string {
-    switch (statusEnum) {
-      case 3: return 'Paid';
-      case 2: return 'Sent';
-      case 1: return 'Draft';
-      case 4: return 'Cancelled';
-      default: return 'Unknown';
-    }
   }
 }
