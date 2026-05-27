@@ -143,6 +143,18 @@ export const routes: Routes = [
         path: 'invoices',
         loadChildren: () => import('./invoices/invoices.module').then(m => m.InvoicesModule)
       },
+      {
+        path: 'accounting',
+        loadChildren: () => import('./accounting/accounting-module').then(m => m.AccountingModule)
+      },
+      {
+        path: 'compliance',
+        loadChildren: () => import('./compliance/compliance-module').then(m => m.ComplianceModule)
+      },
+      {
+        path: 'settings',
+        loadChildren: () => import('./settings/settings-module').then(m => m.SettingsModule)
+      },
       
       // Optional: Add Settings if you generated it earlier
       // {
@@ -153,7 +165,5 @@ export const routes: Routes = [
   },
 
   // 4. Wildcard Fallback (Catch-all for bad URLs)
-  { path: '**', redirectTo: 'dashboard' },
-  { path: 'purchase', loadChildren: () => import('./purchase/purchase-module').then(m => m.PurchaseModule)
-}
+  { path: '**', redirectTo: 'dashboard' }
 ];
