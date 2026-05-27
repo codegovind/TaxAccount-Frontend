@@ -1,123 +1,65 @@
-import { Directive, HostListener, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { FastLedgerModalComponent } from '../components/fast-ledger-modal.component';
+import { Directive, HostListener, Output, EventEmitter, Input } from '@angular/core';
 
 @Directive({
   selector: '[appTallyShortcuts]',
   standalone: true
 })
-export class TallyShortcutsDirective implements OnInit {
-  constructor(private dialog: MatDialog) {}
-
-  ngOnInit(): void {
-    console.log('Tally Shortcuts Directive Initialized');
-  }
+export class TallyShortcutsDirective {
+  @Output() shortcutTriggered = new EventEmitter<string>();
+  @Input() enableDateChange = true;
+  @Input() enableSave = true;
+  @Input() enableCancel = true;
 
   @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent): void {
-    // F2 - Change Date (Global)
-    if (event.key === 'F2') {
+  handleKeyboardEvent(event: KeyboardEvent) {
+    // F2 - Change Date
+    if (this.enableDateChange && event.key === 'F2') {
       event.preventDefault();
-      const dateInput = document.querySelector('input[type="date"]') as HTMLInputElement;
-      if (dateInput) {
-        dateInput.focus();
-        dateInput.showPicker?.();
-      }
-      return;
+      this.shortcutTriggered.emit('CHANGE_DATE');
     }
 
-    // Alt+C - Quick Create Ledger (Global)
-    if (event.altKey && (event.key === 'c' || event.key === 'C')) {
+    // Ctrl+S - Save
+    if (this.enableSave && event.ctrlKey && event.key === 's') {
       event.preventDefault();
-      this.openFastLedgerModal();
-      return;
-    }
-
-    // Ctrl+S - Save Form (Global)
-    if (event.ctrlKey && (event.key === 's' || event.key === 'S')) {
-      event.preventDefault();
-      this.triggerSave();
-      return;
+      this.shortcutTriggered.emit('SAVE');
     }
 
     // Esc - Cancel/Back
-    if (event.key === 'Escape') {
-      const activeDialog = document.querySelector('.mat-mdc-dialog-open');
-      if (activeDialog) {
-        const closeBtn = document.querySelector('button[mat-button][class*="cancel"]') as HTMLButtonElement;
-        if (closeBtn) closeBtn.click();
-      }
-      return;
+    if (this.enableCancel && event.key === 'Escape') {
+      event.preventDefault();
+      this.shortcutTriggered.emit('CANCEL');
     }
 
-    // F4 - Contra Voucher
+    // Alt+C - Quick Create (will be used in Step 2)
+    if (event.altKey && event.key === 'c') {
+      event.preventDefault();
+      this.shortcutTriggered.emit('QUICK_CREATE');
+    }
+
+    // F4-F9 - Voucher Shortcuts (will be used in Steps 3-6)
     if (event.key === 'F4') {
       event.preventDefault();
-      this.navigateTo('/accounting/vouchers/contra');
-      return;
+      this.shortcutTriggered.emit('CONTRA_VOUCHER');
     }
-
-    // F5 - Capital Entry
     if (event.key === 'F5') {
       event.preventDefault();
-      this.navigateTo('/accounting/vouchers/capital');
-      return;
+      this.shortcutTriggered.emit('CAPITAL_VOUCHER');
     }
-
-    // F6 - Tax Payment
     if (event.key === 'F6') {
       event.preventDefault();
-      this.navigateTo('/accounting/vouchers/tax-payment');
-      return;
+      this.shortcutTriggered.emit('TAX_PAYMENT');
     }
-
-    // F7 - Journal Entry
     if (event.key === 'F7') {
       event.preventDefault();
-      this.navigateTo('/accounting/vouchers/journal');
-      return;
+      this.shortcutTriggered.emit('JOURNAL_VOUCHER');
     }
-
-    // F8 - Credit Note
     if (event.key === 'F8') {
       event.preventDefault();
-      this.navigateTo('/sales/credit-note');
-      return;
+      this.shortcutTriggered.emit('CREDIT_NOTE');
     }
-
-    // F9 - Debit Note
     if (event.key === 'F9') {
       event.preventDefault();
-      this.navigateTo('/purchases/debit-note');
-      return;
-    }
-  }
-
-  private openFastLedgerModal(): void {
-    const dialogRef = this.dialog.open(FastLedgerModalComponent, {
-      width: '500px',
-      disableClose: false,
-      data: { tenantId: 1 }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        window.dispatchEvent(new CustomEvent('ledgerCreated', { detail: result }));
-      }
-    });
-  }
-
-  private triggerSave(): void {
-    const saveBtn = document.querySelector('button[type="submit"], button.mat-raised-button[color="primary"]') as HTMLButtonElement;
-    if (saveBtn && !saveBtn.disabled) {
-      saveBtn.click();
-    }
-  }
-
-  private navigateTo(route: string): void {
-    const currentPath = window.location.pathname;
-    if (!currentPath.includes(route)) {
-      window.location.href = route;
+      this.shortcutTriggered.emit('DEBIT_NOTE');
     }
   }
 }
