@@ -45,4 +45,8 @@ export class AccountingService {
     const params = { asOfDate: asOfDate.toISOString().split('T')[0] };
     return this.http.get<FinancialStatement[]>(`${this.apiUrl}/balance-sheet`, { params });
   }
+
+  deleteAccount(id: number) {
+    return this.http.delete(`${this.apiUrl}/accounts/${id}`);
+  }
 }

@@ -145,15 +145,15 @@ export const routes: Routes = [
       },
       {
         path: 'accounting',
-        loadChildren: () => import('./accounting/accounting-module').then(m => m.AccountingModule)
+        loadChildren: () => import('./accounting/accounting-module').then(m => m.default)
       },
       {
         path: 'compliance',
-        loadChildren: () => import('./compliance/compliance-module').then(m => m.ComplianceModule)
+        loadChildren: () => import('./compliance/compliance-module').then(m => m.default)
       },
       {
         path: 'settings',
-        loadChildren: () => import('./settings/settings-module').then(m => m.SettingsModule)
+        loadChildren: () => import('./settings/settings-module').then(m => m.default)
       },
       
       // Optional: Add Settings if you generated it earlier
