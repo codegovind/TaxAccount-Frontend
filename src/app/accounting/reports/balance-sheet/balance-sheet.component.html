@@ -39,9 +39,9 @@
         <div class="mb-6">
           <h4 class="text-lg font-bold text-blue-800 mb-2">ASSETS</h4>
           <div class="ml-4">
-            @for (group of statement.items | filterByType:'Asset'; track group.name) {
+            @for (group of statement.items | filterByType:'Asset'; track group.accountName) {
               <div class="mb-3">
-                <div class="font-semibold text-gray-800">{{ group.name }}</div>
+                <div class="font-semibold text-gray-800">{{ group.accountName }}</div>
                 <div class="text-right text-gray-600 ml-4">₹{{ group.amount | number:'1.2-2' }}</div>
               </div>
             }
@@ -56,9 +56,9 @@
         <div class="mb-6">
           <h4 class="text-lg font-bold text-blue-800 mb-2">LIABILITIES</h4>
           <div class="ml-4">
-            @for (group of statement.items | filterByType:'Liability'; track group.name) {
+            @for (group of statement.items | filterByType:'Liability'; track group.accountName) {
               <div class="mb-3">
-                <div class="font-semibold text-gray-800">{{ group.name }}</div>
+                <div class="font-semibold text-gray-800">{{ group.accountName }}</div>
                 <div class="text-right text-gray-600 ml-4">₹{{ group.amount | number:'1.2-2' }}</div>
               </div>
             }
@@ -73,9 +73,9 @@
         <div class="mb-6">
           <h4 class="text-lg font-bold text-blue-800 mb-2">EQUITY</h4>
           <div class="ml-4">
-            @for (group of statement.items | filterByType:'Equity'; track group.name) {
+            @for (group of statement.items | filterByType:'Equity'; track group.accountName) {
               <div class="mb-3">
-                <div class="font-semibold text-gray-800">{{ group.name }}</div>
+                <div class="font-semibold text-gray-800">{{ group.accountName }}</div>
                 <div class="text-right text-gray-600 ml-4">₹{{ group.amount | number:'1.2-2' }}</div>
               </div>
             }
