@@ -188,7 +188,7 @@ export class DashboardComponent implements OnInit {
       draftInvoices: 5,
       recentInvoices: [
         { id: 1, invoiceNumber: 'INV-0001', contactName: 'Acme Corp', invoiceDate: new Date(), totalAmount: 45000 },
-        { id: 2, invoiceNumber: 'INV-0002', contactName: 'TechFlow', invoiceDate: new Date(), totalAmount: 12500 },
+        { id: 2, invoiceNumber: 'INV-0002', contactName: 'TechFlow', invoiceDate: new Date(), totalAmount: 12500 }
       ]
     });
   }

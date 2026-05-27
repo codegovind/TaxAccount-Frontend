@@ -18,7 +18,6 @@ export interface RecentInvoice {
   invoiceNumber: string;
   contactName?: string; // UPDATED: Replaced customerName, made optional for Cash Sales
   totalAmount: number;
-  status: number;       // UPDATED: Changed from string to number (our new Enum)
   invoiceDate: Date | string; 
 }
 

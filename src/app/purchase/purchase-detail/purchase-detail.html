@@ -7,24 +7,12 @@
     <div>
       <div class="bill-title">
         <h1>{{ bill()!.billNumber }}</h1>
-        <span [class]="'status-badge ' +
-          getStatusClass(bill()!.status)">
-          {{ bill()!.status }}
-        </span>
       </div>
       @if (bill()!.vendorBillNumber) {
         <p>Vendor Bill: {{ bill()!.vendorBillNumber }}</p>
       }
     </div>
     <div class="header-actions">
-      @if (bill()!.status === 'Draft' &&
-          hasPermission('invoices.approve')) {
-        <button class="btn-danger"
-          [disabled]="isDeleting()"
-          (click)="deleteBill()">
-          {{ isDeleting() ? 'Deleting...' : '🗑 Delete' }}
-        </button>
-      }
       <button class="btn-secondary"
         (click)="router.navigate(['/purchase'])">
         ← Back

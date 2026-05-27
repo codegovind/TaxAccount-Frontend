@@ -86,12 +86,6 @@
               </td>
               <td>₹{{ bill.totalAmount | number:'1.2-2' }}</td>
               <td>
-                <span [class]="'status-badge ' +
-                  getStatusClass(bill.status)">
-                  {{ bill.status }}
-                </span>
-              </td>
-              <td>
                 <button class="btn-view"
                   (click)="viewBill(bill.id)">View</button>
               </td>
