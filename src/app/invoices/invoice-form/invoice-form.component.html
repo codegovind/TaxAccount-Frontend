@@ -1,0 +1,170 @@
+<div class="invoice-form-container" appTallyShortcuts (shortcutTriggered)="onShortcut($event)">
+  <div class="form-header">
+    <h1>New Invoice</h1>
+    <div class="header-actions">
+      <button mat-button color="primary" (click)="onShortcut('NEW')">
+        <mat-icon>add_circle</mat-icon> New (Ctrl+N)
+      </button>
+      <button mat-button (click)="router.navigate(['/invoices'])">
+        <mat-icon>arrow_back</mat-icon> Cancel (Esc)
+      </button>
+      <button mat-raised-button color="accent" [disabled]="isSaving || invoiceForm.invalid" (click)="saveInvoice()">
+        <mat-icon>save</mat-icon> Save (Ctrl+S)
+      </button>
+    </div>
+  </div>
+
+  <form [formGroup]="invoiceForm" class="split-view-form">
+    <!-- Left Panel: Master Details -->
+    <div class="master-panel">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Invoice Details</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Customer *</mat-label>
+              <input matInput formControlName="customerName" placeholder="Start typing customer name" 
+                     #customerInput (keydown.enter)="autoFocus($event)">
+              <mat-error *ngIf="invoiceForm.get('customerId')?.invalid">Customer is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Invoice Date *</mat-label>
+              <input matInput [matDatepicker]="picker1" formControlName="invoiceDate">
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Due Date</mat-label>
+              <input matInput [matDatepicker]="picker2" formControlName="dueDate">
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Reference No.</mat-label>
+              <input matInput formControlName="referenceNo" placeholder="PO Number or Reference"
+                     (keydown.enter)="autoFocus($event)">
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Shipping Address</mat-label>
+              <textarea matInput formControlName="shippingAddress" rows="3" placeholder="Delivery address"
+                        (keydown.enter)="autoFocus($event)"></textarea>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Narration</mat-label>
+              <textarea matInput formControlName="narration" rows="2" placeholder="Additional notes"
+                        (keydown.enter)="autoFocus($event)"></textarea>
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Right Panel: Line Items -->
+    <div class="items-panel">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Line Items</mat-card-title>
+          <button mat-icon-button color="primary" (click)="addNewItem()" matTooltip="Add Line Item">
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </mat-card-header>
+        <mat-card-content>
+          <div formArrayName="items">
+            <div *ngFor="let item of items.controls; let i = index" [formGroupName]="i" class="line-item-row">
+              <div class="item-fields">
+                <mat-form-field appearance="outline" class="item-account">
+                  <mat-label>Item {{i + 1}}</mat-label>
+                  <input matInput formControlName="accountName" 
+                         placeholder="Search item..."
+                         (input)="filterAccounts($any($event).target.value, i)"
+                         (keydown.enter)="autoFocus($event)"
+                         #itemInput{{i}}>
+                  <mat-autocomplete #itemAuto="matAutocomplete" (optionSelected)="selectAccount($any($event).option.value, i)">
+                    <mat-option *ngFor="let acc of filteredAccounts" [value]="acc">
+                      {{acc.name}} ({{acc.groupName}})
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="item-qty">
+                  <mat-label>Qty</mat-label>
+                  <input matInput type="number" formControlName="quantity" min="1"
+                         (input)="calculateLineTotal(i)" (keydown.enter)="autoFocus($event)">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="item-rate">
+                  <mat-label>Rate</mat-label>
+                  <input matInput type="number" formControlName="rate" min="0" step="0.01"
+                         (input)="calculateLineTotal(i)" (keydown.enter)="autoFocus($event)">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="item-tax">
+                  <mat-label>Tax %</mat-label>
+                  <mat-select formControlName="taxRate" (selectionChange)="calculateLineTotal(i)">
+                    <mat-option [value]="0">0%</mat-option>
+                    <mat-option [value]="5">5%</mat-option>
+                    <mat-option [value]="12">12%</mat-option>
+                    <mat-option [value]="18">18%</mat-option>
+                    <mat-option [value]="28">28%</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="item-discount">
+                  <mat-label>Discount</mat-label>
+                  <input matInput type="number" formControlName="discount" min="0"
+                         (input)="calculateLineTotal(i)" (keydown.enter)="autoFocus($event)">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="item-amount">
+                  <mat-label>Amount</mat-label>
+                  <input matInput type="number" formControlName="amount" readonly>
+                </mat-form-field>
+
+                <button mat-icon-button color="warn" (click)="removeItem(i)" 
+                        [disabled]="items.length === 1" matTooltip="Remove Line">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Live Totals Footer -->
+      <div class="totals-footer">
+        <div class="total-row">
+          <span class="total-label">Subtotal:</span>
+          <span class="total-value">{{subtotal | currency:'INR':'symbol':'1.2-2'}}</span>
+        </div>
+        <div class="total-row">
+          <span class="total-label">Total Tax:</span>
+          <span class="total-value tax">{{totalTax | currency:'INR':'symbol':'1.2-2'}}</span>
+        </div>
+        <div class="total-row">
+          <span class="total-label">Discount:</span>
+          <span class="total-value discount">-{{totalDiscount | currency:'INR':'symbol':'1.2-2'}}</span>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="total-row grand-total">
+          <span class="total-label">Grand Total:</span>
+          <span class="total-value">{{grandTotal | currency:'INR':'symbol':'1.2-2'}}</span>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
