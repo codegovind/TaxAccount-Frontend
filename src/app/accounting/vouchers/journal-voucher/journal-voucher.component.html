@@ -1,0 +1,136 @@
+<div class="voucher-container" appTallyShortcuts (shortcutTriggered)="onShortcut($event)">
+  <mat-card class="voucher-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>receipt</mat-icon>
+        Journal Voucher (F7)
+      </mat-card-title>
+      <mat-card-subtitle>Non-cash adjustments & transfers</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="voucherForm">
+        <!-- Header Section -->
+        <div class="voucher-header">
+          <mat-form-field appearance="outline">
+            <mat-label>Date</mat-label>
+            <input matInput formControlName="date" type="date">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="voucher-number">
+            <mat-label>Voucher No.</mat-label>
+            <input matInput [value]="voucherNumber || 'Auto-generated'" disabled>
+          </mat-form-field>
+
+          <mat-chip-set>
+            <mat-chip [color]="isBalanced ? 'primary' : 'warn'" *ngIf="isBalanced">
+              <mat-icon>check_circle</mat-icon> Balanced
+            </mat-chip>
+            <mat-chip [color]="isBalanced ? 'primary' : 'warn'" *ngIf="!isBalanced">
+              <mat-icon>error</mat-icon> Not Balanced
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+
+        <!-- Entries Section -->
+        <div formArrayName="entries" class="entries-section">
+          <div *ngFor="let entry of entries.controls; let i = index" [formGroupName]="i" class="entry-row">
+            <div class="entry-account">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Account (Type to search)</mat-label>
+                <input matInput 
+                       [formControlName]="'accountName'" 
+                       (input)="filterAccounts($any($event).target.value, i)"
+                       [matAutocomplete]="accountAuto"
+                       placeholder="Start typing account name...">
+                <mat-autocomplete #accountAuto="matAutocomplete" (optionSelected)="selectAccount($event.option.value, i)">
+                  <mat-option *ngFor="let account of filteredAccounts" [value]="account">
+                    {{ account.name }} ({{ account.groupName }})
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="entry.get('accountId')?.invalid && entry.get('accountId')?.touched">
+                  Account is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="entry-amounts">
+              <mat-form-field appearance="outline">
+                <mat-label>Debit (₹)</mat-label>
+                <input matInput formControlName="debit" type="number" min="0" step="0.01" 
+                       (change)="calculateTotals()" placeholder="0.00">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Credit (₹)</mat-label>
+                <input matInput formControlName="credit" type="number" min="0" step="0.01" 
+                       (change)="calculateTotals()" placeholder="0.00">
+              </mat-form-field>
+            </div>
+
+            <div class="entry-narration">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Narration</mat-label>
+                <input matInput formControlName="narration" maxlength="200" 
+                       placeholder="Optional narration for this entry">
+              </mat-form-field>
+            </div>
+
+            <button mat-icon-button color="warn" type="button" 
+                    (click)="removeEntry(i)" 
+                    [disabled]="entries.length <= 2"
+                    matTooltip="Remove entry">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Add Entry Button -->
+        <button mat-stroked-button color="primary" type="button" (click)="addEntry()" class="add-entry-btn">
+          <mat-icon>add</mat-icon> Add Entry Line (Alt+I)
+        </button>
+
+        <!-- Common Narration -->
+        <mat-form-field appearance="outline" class="full-width common-narration">
+          <mat-label>Common Narration</mat-label>
+          <textarea matInput formControlName="narration" rows="2" 
+                    placeholder="Enter common narration for all entries (optional)"></textarea>
+          <mat-hint>Maximum 250 characters</mat-hint>
+        </mat-form-field>
+
+        <!-- Totals Section -->
+        <mat-divider></mat-divider>
+        
+        <div class="totals-section">
+          <div class="total-row">
+            <span class="total-label">Total Debit:</span>
+            <span class="total-value">₹ {{ totalDebit | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-row">
+            <span class="total-label">Total Credit:</span>
+            <span class="total-value">₹ {{ totalCredit | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-row difference" *ngIf="!isBalanced">
+            <span class="total-label">Difference:</span>
+            <span class="total-value warn">₹ {{ difference | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button color="warn" type="button" (click)="cancel()">
+        <mat-icon>cancel</mat-icon> Cancel (Esc)
+      </button>
+      <button mat-button color="accent" type="button" (click)="resetForm()">
+        <mat-icon>refresh</mat-icon> New (F7)
+      </button>
+      <button mat-flat-button color="primary" type="button" 
+              (click)="saveVoucher()" 
+              [disabled]="!isBalanced || isSaving || !voucherForm.valid">
+        <mat-icon>save</mat-icon> 
+        {{ isSaving ? 'Saving...' : 'Save (Ctrl+S)' }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

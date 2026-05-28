@@ -1,0 +1,32 @@
+<div class="voucher-container" appTallyShortcuts (shortcutTriggered)="onShortcut($event)">
+  <mat-card class="voucher-card">
+    <mat-card-header>
+      <mat-card-title><mat-icon>receipt_long</mat-icon> Credit Note (F8)</mat-card-title>
+      <mat-card-subtitle>Sales returns & allowances</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="voucherForm">
+        <div class="voucher-header">
+          <mat-form-field appearance="outline"><mat-label>Date</mat-label><input matInput formControlName="date" type="date"></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Reference No.</mat-label><input matInput formControlName="referenceNo" placeholder="Optional reference"></mat-form-field>
+          <mat-form-field appearance="outline" class="full-width"><mat-label>Reason</mat-label><mat-select formControlName="reason"><mat-option value="Sales Return">Sales Return</mat-option><mat-option value="Price Adjustment">Price Adjustment</mat-option><mat-option value="Damaged Goods">Damaged Goods</mat-option><mat-option value="Other">Other</mat-option></mat-select></mat-form-field>
+        </div>
+        <mat-form-field appearance="outline" class="full-width"><mat-label>Customer Account</mat-label><input matInput formControlName="customerAccount" (input)="filterAccounts($any($event).target.value)" [matAutocomplete]="custAuto" placeholder="Start typing customer name..."><mat-autocomplete #custAuto="matAutocomplete" (optionSelected)="selectAccount($event.option.value, 0)"><mat-option *ngFor="let acc of filteredAccounts" [value]="acc">{{ acc.name }} ({{ acc.groupName }})</mat-option></mat-autocomplete></mat-form-field>
+        <div formArrayName="entries" class="entries-section">
+          <div *ngFor="let entry of entries.controls; let i = index" [formGroupName]="i" class="entry-row">
+            <mat-form-field appearance="outline" class="full-width"><mat-label>Account</mat-label><input matInput formControlName="accountName" (input)="filterAccounts($any($event).target.value)" [matAutocomplete]="accAuto" placeholder="Search account..."><mat-autocomplete #accAuto="matAutocomplete" (optionSelected)="selectAccount($event.option.value, i)"><mat-option *ngFor="let acc of filteredAccounts" [value]="acc">{{ acc.name }}</mat-option></mat-autocomplete></mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Amount (₹)</mat-label><input matInput formControlName="amount" type="number" min="0.01" step="0.01" (change)="calculateTotal()"></mat-form-field>
+            <button mat-icon-button color="warn" type="button" (click)="removeEntry(i)" [disabled]="entries.length <= 1"><mat-icon>delete</mat-icon></button>
+          </div>
+        </div>
+        <button mat-stroked-button color="primary" type="button" (click)="addEntry()"><mat-icon>add</mat-icon> Add Line</button>
+        <div class="totals-section"><strong>Total Amount: ₹ {{ totalAmount | number:'1.2-2' }}</strong></div>
+      </form>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-button color="warn" (click)="cancel()">Cancel (Esc)</button>
+      <button mat-button color="accent" (click)="resetForm()">New (F8)</button>
+      <button mat-flat-button color="primary" (click)="saveVoucher()" [disabled]="isSaving || !voucherForm.valid">{{ isSaving ? 'Saving...' : 'Save (Ctrl+S)' }}</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
