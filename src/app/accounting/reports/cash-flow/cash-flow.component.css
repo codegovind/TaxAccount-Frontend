@@ -1,0 +1,184 @@
+.cash-flow-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.cash-flow-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.controls-section {
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.form-row mat-form-field {
+  min-width: 180px;
+}
+
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.loading-indicator p {
+  margin-top: 16px;
+  color: #666;
+}
+
+.cash-flow-statement {
+  margin-top: 20px;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  text-align: center;
+  padding: 16px;
+}
+
+.summary-card .amount {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 8px;
+}
+
+.summary-card.highlight {
+  background-color: #e3f2fd;
+  border-left: 4px solid #2196f3;
+}
+
+.inflow {
+  color: #4caf50 !important;
+}
+
+.outflow {
+  color: #f44336 !important;
+}
+
+.activity-section {
+  margin-bottom: 20px;
+}
+
+.activity-section mat-card-header {
+  background-color: #f9f9f9;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.activity-section mat-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1976d2;
+}
+
+.cash-flow-table {
+  width: 100%;
+}
+
+.cash-flow-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.cash-flow-table tr:last-child td {
+  border-bottom: none;
+}
+
+.total-row {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.total-row td {
+  padding: 16px 8px;
+  border-top: 2px solid #333;
+  border-bottom: none;
+}
+
+.final-summary {
+  background-color: #e8f5e9;
+  border: 2px solid #4caf50;
+  margin-top: 24px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #c8e6c9;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row.total {
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #c8e6c9;
+  padding: 16px;
+  margin: 0 -16px -16px -16px;
+}
+
+/* Print Styles */
+@media print {
+  .controls-section {
+    display: none;
+  }
+  
+  .cash-flow-container {
+    padding: 0;
+  }
+  
+  .cash-flow-card {
+    box-shadow: none;
+  }
+  
+  .activity-section {
+    break-inside: avoid;
+  }
+  
+  button {
+    display: none;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+  
+  .form-row mat-form-field,
+  .form-row button {
+    width: 100%;
+  }
+  
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .cash-flow-table {
+    font-size: 14px;
+  }
+}
