@@ -6,11 +6,14 @@ import { InvoiceService } from '../../core/services/invoice.service';
 import { ProductService } from '../../core/services/product.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ContactService } from '../../core/services/contact.service';
+import { TallyShortcutsDirective } from '../../shared/directives/tally-shortcuts.directive';
+import { MatDialog } from '@angular/material/dialog';
+import { FastLedgerModalComponent } from '../../shared/components/fast-ledger-modal.component';
 
 @Component({
   selector: 'app-invoice-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, TallyShortcutsDirective],
   templateUrl: './invoice-create.html',
   styleUrl: './invoice-create.scss'
 })
@@ -32,7 +35,8 @@ export class InvoiceCreateComponent implements OnInit {
     private productService: ProductService,
     private authService: AuthService,
     private contactService: ContactService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {
     this.invoiceForm = this.fb.group({
       invoiceType: [1, Validators.required],   // 1 = Sale
@@ -50,6 +54,33 @@ export class InvoiceCreateComponent implements OnInit {
     this.loadProducts();
     this.loadContacts();
     this.addItem();
+  }
+
+  onShortcut(event: string): void {
+    if (event === 'QUICK_CREATE') {
+      this.openFastLedgerModal();
+    } else if (event === 'SAVE') {
+      if (this.invoiceForm.valid && !this.isSubmitting()) {
+        this.onSubmit();
+      }
+    } else if (event === 'CANCEL') {
+      this.navigateTo('/invoices');
+    }
+  }
+
+  openFastLedgerModal(): void {
+    const dialogRef = this.dialog.open(FastLedgerModalComponent, {
+      width: '500px',
+      data: { tenantId: 1 } // TODO: Get actual tenantId from auth service
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('New ledger created:', result);
+        // Reload contacts to include the new ledger if needed
+        this.loadContacts();
+      }
+    });
   }
 
   loadProducts(): void {

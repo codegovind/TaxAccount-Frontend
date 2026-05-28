@@ -31,7 +31,7 @@
       </button>
     </div>
 
-    <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()" appTallyShortcuts (shortcutTriggered)="onShortcut($event)">
 
       <!-- Invoice Details -->
       <div class="section">
