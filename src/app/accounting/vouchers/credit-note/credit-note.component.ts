@@ -70,9 +70,9 @@ export class CreditNoteComponent implements OnInit, OnDestroy {
 
   loadAccounts(): void {
     this.isLoading = true;
-    this.accountingService.getChartOfAccounts().pipe(takeUntil(this.destroy$)).subscribe((accounts: AccountHead[]) => {
-      this.allAccounts = accounts;
-      this.filteredAccounts = accounts;
+    this.accountingService.getChartOfAccounts().pipe(takeUntil(this.destroy$)).subscribe(accounts => {
+      this.allAccounts = accounts as any;
+      this.filteredAccounts = accounts as any;
       this.isLoading = false;
     });
   }

@@ -33,7 +33,7 @@ export class DebitNoteComponent implements OnInit, OnDestroy {
   get entries(): FormArray { return this.voucherForm.get('entries') as FormArray; }
   addEntry(): void { this.entries.push(this.createEntry()); setTimeout(() => this.calculateTotal(), 100); }
   removeEntry(index: number): void { if (this.entries.length > 1) { this.entries.removeAt(index); this.calculateTotal(); } }
-  loadAccounts(): void { this.isLoading = true; this.accountingService.getChartOfAccounts().pipe(takeUntil(this.destroy$)).subscribe((accounts: AccountHead[]) => { this.allAccounts = accounts; this.filteredAccounts = accounts; this.isLoading = false; }); }
+  loadAccounts(): void { this.isLoading = true; this.accountingService.getChartOfAccounts().pipe(takeUntil(this.destroy$)).subscribe(accounts => { this.allAccounts = accounts as any; this.filteredAccounts = accounts as any; this.isLoading = false; }); }
   filterAccounts(searchText: string): void { if (!searchText || searchText.length < 2) { this.filteredAccounts = this.allAccounts; return; } const search = searchText.toLowerCase(); this.filteredAccounts = this.allAccounts.filter(a => a.name.toLowerCase().includes(search)); }
   selectAccount(account: AccountHead, index: number): void { const entry = this.entries.at(index); entry.patchValue({ accountId: account.id, accountName: account.name }); this.filteredAccounts = this.allAccounts; }
   calculateTotal(): void { this.totalAmount = this.entries.controls.reduce((sum, ctrl) => sum + (ctrl.get('amount')?.value || 0), 0); }
