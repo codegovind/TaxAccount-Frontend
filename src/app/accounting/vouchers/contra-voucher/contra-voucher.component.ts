@@ -2,8 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AccountingService } from '../../../core/services/accounting.service';
-import { AccountHead } from '../../../core/services/accounting.service';
+import { AccountingService, AccountHead } from '../../../core/services/accounting.service';
 import { TallyShortcutsDirective } from '../../../shared/directives/tally-shortcuts.directive';
 import { MatDialog } from '@angular/material/dialog';
 import { FastLedgerModalComponent } from '../../../shared/components/fast-ledger-modal.component';
@@ -210,14 +209,15 @@ export class ContraVoucherComponent implements OnInit {
 
   loadAccounts(): void {
     this.accountingService.getChartOfAccounts().subscribe({
-      next: (accounts) => {
+      next: (accounts: AccountHead[]) => {
         // Filter only Cash and Bank accounts for contra voucher
-        this.allAccounts.set(accounts.filter(a => 
-          a.type === 'Asset' && (a.name.toLowerCase().includes('cash') || a.name.toLowerCase().includes('bank'))
+        // type: 0=Asset, 1=Liability, 2=Equity, 3=Income, 4=Expense
+        this.allAccounts.set(accounts.filter((a: AccountHead) => 
+          a.type === 0 && (a.name.toLowerCase().includes('cash') || a.name.toLowerCase().includes('bank'))
         ));
         this.filteredAccounts.set(this.allAccounts());
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error loading accounts:', err);
         this.errorMessage.set('Failed to load accounts');
       }
