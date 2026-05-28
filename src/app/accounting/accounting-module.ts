@@ -17,6 +17,11 @@ const routes: Routes = [
     title: 'Contra Voucher'
   },
   {
+    path: 'capital-entry',
+    loadComponent: () => import('./vouchers/capital-entry/capital-entry.component').then(m => m.CapitalEntryComponent),
+    title: 'Capital Entry'
+  },
+  {
     path: 'trial-balance',
     loadComponent: () => import('./reports/trial-balance/trial-balance.component').then(m => m.TrialBalanceComponent),
     title: 'Trial Balance'

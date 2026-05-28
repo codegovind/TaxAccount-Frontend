@@ -1,0 +1,164 @@
+<div class="capital-entry-container" appTallyShortcuts (shortcutTriggered)="onShortcut($event)">
+  <div class="header">
+    <h2>
+      <mat-icon>account_balance</mat-icon>
+      {{ entryType }} Entry
+    </h2>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" (click)="newEntry()">
+        <mat-icon>add_circle</mat-icon>
+        New (F5)
+      </button>
+      <button mat-raised-button color="accent" (click)="saveEntry()" [disabled]="!isBalanced">
+        <mat-icon>save</mat-icon>
+        Save (Ctrl+S)
+      </button>
+      <button mat-raised-button color="warn" (click)="cancel()">
+        <mat-icon>cancel</mat-icon>
+        Cancel (Esc)
+      </button>
+    </div>
+  </div>
+
+  <mat-card class="entry-form">
+    <mat-card-content>
+      <!-- Entry Type Toggle -->
+      <div class="type-toggle">
+        <mat-button-toggle-group [(value)]="entryType" (change)="toggleEntryType()">
+          <mat-button-toggle value="Capital">Capital</mat-button-toggle>
+          <mat-button-toggle value="Drawings">Drawings</mat-button-toggle>
+        </mat-button-toggle-group>
+        <mat-chip [color]="entryType === 'Capital' ? 'primary' : 'warn'">
+          {{ entryType }}
+        </mat-chip>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Basic Info -->
+      <div class="basic-info">
+        <mat-form-field appearance="outline">
+          <mat-label>Date</mat-label>
+          <input matInput type="date" [(ngModel)]="date">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Reference No.</mat-label>
+          <input matInput type="text" [(ngModel)]="referenceNo" placeholder="Ref. Number">
+        </mat-form-field>
+      </div>
+
+      <!-- Entry Rows -->
+      <div class="entry-rows">
+        <table class="entry-table">
+          <thead>
+            <tr>
+              <th width="40%">Account Head</th>
+              <th width="20%">Debit (₹)</th>
+              <th width="20%">Credit (₹)</th>
+              <th width="15%">Narration</th>
+              <th width="5%">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of rows; let i = index">
+              <td>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Search Account</mat-label>
+                  <input 
+                    matInput 
+                    type="text"
+                    [(ngModel)]="row.accountName"
+                    (input)="onSearchInput(row, $event)"
+                    placeholder="Start typing to search..."
+                    [attr.autofocus]="i === 0 ? true : null">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Debit</mat-label>
+                  <input 
+                    matInput 
+                    type="number" 
+                    [(ngModel)]="row.debitAmount"
+                    (ngModelChange)="calculateTotals()"
+                    placeholder="0.00">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Credit</mat-label>
+                  <input 
+                    matInput 
+                    type="number" 
+                    [(ngModel)]="row.creditAmount"
+                    (ngModelChange)="calculateTotals()"
+                    placeholder="0.00">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Narration</mat-label>
+                  <input matInput type="text" [(ngModel)]="row.narration">
+                </mat-form-field>
+              </td>
+              <td>
+                <button 
+                  mat-icon-button 
+                  color="warn" 
+                  (click)="removeRow(row.id)"
+                  [disabled]="rows.length === 1"
+                  title="Remove Row">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <button mat-stroked-button color="primary" (click)="addRow()" class="add-row-btn">
+          <mat-icon>add</mat-icon>
+          Add Row (Enter)
+        </button>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Totals Section -->
+      <div class="totals-section">
+        <div class="total-row">
+          <span class="label">Total Debit:</span>
+          <span class="value">{{ totalDebit | currency:'INR':'symbol':'1.2-2' }}</span>
+        </div>
+        <div class="total-row">
+          <span class="label">Total Credit:</span>
+          <span class="value">{{ totalCredit | currency:'INR':'symbol':'1.2-2' }}</span>
+        </div>
+        <div class="total-row difference" [class.balanced]="isBalanced">
+          <span class="label">Difference:</span>
+          <span class="value">{{ difference | currency:'INR':'symbol':'1.2-2' }}</span>
+          <mat-chip [color]="isBalanced ? 'primary' : 'warn'" class="status-chip">
+            {{ isBalanced ? '✓ Balanced' : '✗ Not Balanced' }}
+          </mat-chip>
+        </div>
+      </div>
+
+      <!-- Common Narration -->
+      <mat-form-field appearance="outline" class="narration-field">
+        <mat-label>Common Narration</mat-label>
+        <textarea matInput [(ngModel)]="narration" rows="2" placeholder="Optional common narration for all entries"></textarea>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Keyboard Shortcuts Help -->
+  <div class="shortcuts-help">
+    <h4><mat-icon>keyboard</mat-icon> Keyboard Shortcuts</h4>
+    <div class="shortcut-list">
+      <span><kbd>F5</kbd> New Entry</span>
+      <span><kbd>Ctrl+S</kbd> Save</span>
+      <span><kbd>Esc</kbd> Cancel</span>
+      <span><kbd>Enter</kbd> Add Row</span>
+    </div>
+  </div>
+</div>
