@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { AccountingService, AccountHead } from '../../accounting/accounting.service';
+import { AccountingService, AccountHead } from '../../core/services/accounting.service';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
