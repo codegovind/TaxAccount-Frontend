@@ -125,9 +125,9 @@ export class JournalVoucherComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.accountingService.getChartOfAccounts()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((accounts: AccountHead[]) => {
-        this.allAccounts = accounts;
-        this.filteredAccounts = accounts;
+      .subscribe(accounts => {
+        this.allAccounts = accounts as any;
+        this.filteredAccounts = accounts as any;
         this.isLoading = false;
       });
   }

@@ -1,0 +1,33 @@
+/* Stock Summary Styles */
+
+.stock-summary-container {
+  padding: 20px;
+}
+
+.filter-section {
+  margin-bottom: 20px;
+}
+
+.stock-table {
+  width: 100%;
+}
+
+.mat-column-name {
+  width: 30%;
+}
+
+.mat-column-category {
+  width: 20%;
+}
+
+.mat-column-quantity {
+  width: 15%;
+}
+
+.mat-column-unit {
+  width: 15%;
+}
+
+.mat-column-value {
+  width: 20%;
+}
