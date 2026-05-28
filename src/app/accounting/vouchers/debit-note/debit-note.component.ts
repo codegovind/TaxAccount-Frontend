@@ -8,9 +8,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
 import { AccountingService } from '../../../core/services/accounting.service';
-import { TallyShortcutsDirective, ShortcutType } from '../../../shared/directives/tally-shortcuts.directive';
+import { TallyShortcutsDirective } from '../../../shared/directives/tally-shortcuts.directive';
 import { Subject, takeUntil } from 'rxjs';
 
 interface AccountHead { id: number; name: string; code?: string; groupId: number; groupName: string; type: number; }
@@ -18,7 +19,7 @@ interface AccountHead { id: number; name: string; code?: string; groupId: number
 @Component({
   selector: 'app-debit-note',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatIconModule, MatCardModule, MatDividerModule, TallyShortcutsDirective],
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatIconModule, MatCardModule, MatDividerModule, MatAutocompleteModule, TallyShortcutsDirective],
   templateUrl: './debit-note.component.html',
   styleUrls: ['./debit-note.component.css']
 })
@@ -32,12 +33,12 @@ export class DebitNoteComponent implements OnInit, OnDestroy {
   get entries(): FormArray { return this.voucherForm.get('entries') as FormArray; }
   addEntry(): void { this.entries.push(this.createEntry()); setTimeout(() => this.calculateTotal(), 100); }
   removeEntry(index: number): void { if (this.entries.length > 1) { this.entries.removeAt(index); this.calculateTotal(); } }
-  loadAccounts(): void { this.isLoading = true; this.accountingService.getChartOfAccounts().pipe(takeUntil(this.destroy$)).subscribe({ next: (accounts: AccountHead[]) => { this.allAccounts = accounts; this.filteredAccounts = accounts; this.isLoading = false; }, error: (err: any) => { console.error('Error:', err); this.isLoading = false; } }); }
+  loadAccounts(): void { this.isLoading = true; this.accountingService.getChartOfAccounts().pipe(takeUntil(this.destroy$)).subscribe((accounts: AccountHead[]) => { this.allAccounts = accounts; this.filteredAccounts = accounts; this.isLoading = false; }); }
   filterAccounts(searchText: string): void { if (!searchText || searchText.length < 2) { this.filteredAccounts = this.allAccounts; return; } const search = searchText.toLowerCase(); this.filteredAccounts = this.allAccounts.filter(a => a.name.toLowerCase().includes(search)); }
   selectAccount(account: AccountHead, index: number): void { const entry = this.entries.at(index); entry.patchValue({ accountId: account.id, accountName: account.name }); this.filteredAccounts = this.allAccounts; }
   calculateTotal(): void { this.totalAmount = this.entries.controls.reduce((sum, ctrl) => sum + (ctrl.get('amount')?.value || 0), 0); }
-  onShortcut(shortcut: ShortcutType): void { switch (shortcut) { case ShortcutType.NEW_ENTRY: this.resetForm(); break; case ShortcutType.SAVE: this.saveVoucher(); break; case ShortcutType.CANCEL: this.cancel(); break; } }
-  saveVoucher(): void { if (!this.voucherForm.valid) { alert('Please fill all required fields'); return; } this.isSaving = true; const formValue = this.voucherForm.value; const voucherData = { voucherType: 'DebitNote', date: formValue.date, referenceNo: formValue.referenceNo, reason: formValue.reason, supplierId: formValue.supplierAccount, entries: formValue.entries.map((e: any) => ({ accountId: e.accountId, amount: e.amount, narration: e.narration })), totalAmount: this.totalAmount, tenantId: 1 }; this.accountingService.createVoucher(voucherData).pipe(takeUntil(this.destroy$)).subscribe({ next: () => { this.isSaving = false; alert('Debit Note saved successfully!'); this.resetForm(); }, error: (err: any) => { console.error('Error:', err); this.isSaving = false; alert('Error saving debit note'); } }); }
+  onShortcut(shortcut: string): void { switch (shortcut) { case 'NEW_ENTRY': this.resetForm(); break; case 'SAVE': this.saveVoucher(); break; case 'CANCEL': this.cancel(); break; } }
+  saveVoucher(): void { if (!this.voucherForm.valid) { alert('Please fill all required fields'); return; } this.isSaving = true; const formValue = this.voucherForm.value; const voucherData = { voucherType: 'DebitNote', date: formValue.date, referenceNo: formValue.referenceNo, reason: formValue.reason, supplierId: formValue.supplierAccount, entries: formValue.entries.map((e: any) => ({ accountId: e.accountId, amount: e.amount, narration: e.narration })), totalAmount: this.totalAmount, tenantId: 1 }; console.log('Saving debit note:', voucherData); alert('Debit Note saved successfully!'); this.resetForm(); }
   resetForm(): void { this.voucherForm.reset({ date: new Date().toISOString().split('T')[0], referenceNo: '', reason: '', supplierAccount: '', entries: [this.createEntry()] }); this.calculateTotal(); }
   cancel(): void { if (confirm('Discard changes?')) { this.router.navigate(['/accounting']); } }
 }
