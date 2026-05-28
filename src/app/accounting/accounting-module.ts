@@ -12,6 +12,11 @@ const routes: Routes = [
     title: 'General Ledger'
   },
   {
+    path: 'contra-voucher',
+    loadComponent: () => import('./vouchers/contra-voucher/contra-voucher.component').then(m => m.ContraVoucherComponent),
+    title: 'Contra Voucher'
+  },
+  {
     path: 'trial-balance',
     loadComponent: () => import('./reports/trial-balance/trial-balance.component').then(m => m.TrialBalanceComponent),
     title: 'Trial Balance'

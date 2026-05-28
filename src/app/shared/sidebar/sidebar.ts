@@ -99,6 +99,7 @@ export class SidebarComponent implements OnInit {
       children: [
         { title: 'Chart of Accounts', path: '/accounting/chart-of-accounts' },
         { title: 'General Ledger', path: '/accounting/general-ledger' },
+        { title: 'Contra Voucher', path: '/accounting/contra-voucher' },
         { title: 'Trial Balance', path: '/accounting/trial-balance' },
         { title: 'Profit & Loss', path: '/accounting/profit-loss' },
         { title: 'Balance Sheet', path: '/accounting/balance-sheet' }
