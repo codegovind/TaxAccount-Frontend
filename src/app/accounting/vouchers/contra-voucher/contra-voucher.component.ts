@@ -2,11 +2,22 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AccountingService, AccountHead } from '../../../core/services/accounting.service';
+import { AccountingService } from '../../../core/services/accounting.service';
 import { TallyShortcutsDirective } from '../../../shared/directives/tally-shortcuts.directive';
 import { MatDialog } from '@angular/material/dialog';
 import { FastLedgerModalComponent } from '../../../shared/components/fast-ledger-modal.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+interface AccountHead {
+  id: number;
+  name: string;
+  code: string;
+  type: number; // 0=Asset, 1=Liability, 2=Equity, 3=Income, 4=Expense
+  parentId?: number;
+  openingBalance: number;
+  tenantId: number;
+  isActive: boolean;
+}
 
 interface ContraEntry {
   accountHeadId: number;
