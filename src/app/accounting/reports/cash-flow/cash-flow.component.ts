@@ -12,6 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subject, takeUntil } from 'rxjs';
 import { AccountingService } from '../../accounting.service';
 
@@ -57,7 +58,8 @@ interface CashFlowStatement {
     MatDatepickerModule,
     MatNativeDateModule,
     MatDialogModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './cash-flow.component.html',
   styleUrls: ['./cash-flow.component.css']

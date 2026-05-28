@@ -5,7 +5,7 @@
       <button mat-button color="primary" (click)="onShortcut('NEW')">
         <mat-icon>add_circle</mat-icon> New (Ctrl+N)
       </button>
-      <button mat-button (click)="router.navigate(['/invoices'])">
+      <button mat-button (click)="cancel()">
         <mat-icon>arrow_back</mat-icon> Cancel (Esc)
       </button>
       <button mat-raised-button color="accent" [disabled]="isSaving || invoiceForm.invalid" (click)="saveInvoice()">
@@ -26,7 +26,7 @@
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Customer *</mat-label>
               <input matInput formControlName="customerName" placeholder="Start typing customer name" 
-                     #customerInput (keydown.enter)="autoFocus($event)">
+                     #customerInput (keydown.enter)="autoFocus($any($event))">
               <mat-error *ngIf="invoiceForm.get('customerId')?.invalid">Customer is required</mat-error>
             </mat-form-field>
           </div>
@@ -51,7 +51,7 @@
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Reference No.</mat-label>
               <input matInput formControlName="referenceNo" placeholder="PO Number or Reference"
-                     (keydown.enter)="autoFocus($event)">
+                     (keydown.enter)="autoFocus($any($event))">
             </mat-form-field>
           </div>
 
@@ -59,7 +59,7 @@
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Shipping Address</mat-label>
               <textarea matInput formControlName="shippingAddress" rows="3" placeholder="Delivery address"
-                        (keydown.enter)="autoFocus($event)"></textarea>
+                        (keydown.enter)="autoFocus($any($event))"></textarea>
             </mat-form-field>
           </div>
 
@@ -67,7 +67,7 @@
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Narration</mat-label>
               <textarea matInput formControlName="narration" rows="2" placeholder="Additional notes"
-                        (keydown.enter)="autoFocus($event)"></textarea>
+                        (keydown.enter)="autoFocus($any($event))"></textarea>
             </mat-form-field>
           </div>
         </mat-card-content>
@@ -92,7 +92,7 @@
                   <input matInput formControlName="accountName" 
                          placeholder="Search item..."
                          (input)="filterAccounts($any($event).target.value, i)"
-                         (keydown.enter)="autoFocus($event)"
+                         (keydown.enter)="autoFocus($any($event))"
                          #itemInput{{i}}>
                   <mat-autocomplete #itemAuto="matAutocomplete" (optionSelected)="selectAccount($any($event).option.value, i)">
                     <mat-option *ngFor="let acc of filteredAccounts" [value]="acc">
@@ -104,13 +104,13 @@
                 <mat-form-field appearance="outline" class="item-qty">
                   <mat-label>Qty</mat-label>
                   <input matInput type="number" formControlName="quantity" min="1"
-                         (input)="calculateLineTotal(i)" (keydown.enter)="autoFocus($event)">
+                         (input)="calculateLineTotal(i)" (keydown.enter)="autoFocus($any($event))">
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="item-rate">
                   <mat-label>Rate</mat-label>
                   <input matInput type="number" formControlName="rate" min="0" step="0.01"
-                         (input)="calculateLineTotal(i)" (keydown.enter)="autoFocus($event)">
+                         (input)="calculateLineTotal(i)" (keydown.enter)="autoFocus($any($event))">
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="item-tax">
@@ -127,7 +127,7 @@
                 <mat-form-field appearance="outline" class="item-discount">
                   <mat-label>Discount</mat-label>
                   <input matInput type="number" formControlName="discount" min="0"
-                         (input)="calculateLineTotal(i)" (keydown.enter)="autoFocus($event)">
+                         (input)="calculateLineTotal(i)" (keydown.enter)="autoFocus($any($event))">
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="item-amount">

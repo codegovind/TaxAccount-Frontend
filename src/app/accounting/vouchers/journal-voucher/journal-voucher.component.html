@@ -43,7 +43,7 @@
                        (input)="filterAccounts($any($event).target.value, i)"
                        [matAutocomplete]="accountAuto"
                        placeholder="Start typing account name...">
-                <mat-autocomplete #accountAuto="matAutocomplete" (optionSelected)="selectAccount($event.option.value, i)">
+                <mat-autocomplete #accountAuto="matAutocomplete" (optionSelected)="selectAccount($any($event).option.value, i)">
                   <mat-option *ngFor="let account of filteredAccounts" [value]="account">
                     {{ account.name }} ({{ account.groupName }})
                   </mat-option>
