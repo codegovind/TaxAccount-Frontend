@@ -22,6 +22,11 @@ const routes: Routes = [
     title: 'Capital Entry'
   },
   {
+    path: 'tax-payment',
+    loadComponent: () => import('./vouchers/tax-payment/tax-payment.component').then(m => m.TaxPaymentComponent),
+    title: 'Tax Payment'
+  },
+  {
     path: 'trial-balance',
     loadComponent: () => import('./reports/trial-balance/trial-balance.component').then(m => m.TrialBalanceComponent),
     title: 'Trial Balance'

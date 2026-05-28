@@ -1,0 +1,155 @@
+<div class="tax-payment-container" appTallyShortcuts (shortcutTriggered)="onShortcut($event)">
+  <div class="header-bar">
+    <h2>Tax Payment (F6)</h2>
+    <div class="header-actions">
+      <button mat-button color="primary" (click)="newTaxPayment()">
+        <mat-icon>add_circle</mat-icon> New (F6)
+      </button>
+      <button mat-flat-button color="accent" [disabled]="saving || !isBalanced()" (click)="saveTaxPayment()">
+        <mat-icon>save</mat-icon> Save (Ctrl+S)
+      </button>
+      <button mat-button color="warn" (click)="cancel()">
+        <mat-icon>cancel</mat-icon> Cancel (Esc)
+      </button>
+    </div>
+  </div>
+
+  <form [formGroup]="taxForm" class="tax-form">
+    <div class="form-header">
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Voucher No.</mat-label>
+          <input matInput formControlName="voucherNumber" placeholder="Auto-generated">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Date</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="date">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <div class="period-toggle">
+          <span class="period-label">Period:</span>
+          <button mat-stroked-button (click)="togglePeriod()" type="button">
+            {{ taxPeriod }}
+          </button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Period From</mat-label>
+          <input matInput [matDatepicker]="fromPicker" formControlName="periodFrom">
+          <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+          <mat-datepicker #fromPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Period To</mat-label>
+          <input matInput [matDatepicker]="toPicker" formControlName="periodTo">
+          <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+          <mat-datepicker #toPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <mat-card class="entries-card">
+      <mat-card-header>
+        <mat-card-title>Tax Details</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table class="entries-table">
+          <thead>
+            <tr>
+              <th style="width: 40%;">Account Name</th>
+              <th style="width: 25%;">Debit (₹)</th>
+              <th style="width: 25%;">Credit (₹)</th>
+              <th style="width: 10%;">Action</th>
+            </tr>
+          </thead>
+          <tbody formArrayName="entries">
+            <tr *ngFor="let entry of entries.controls; let i = index" [formGroupName]="i">
+              <td>
+                <mat-form-field appearance="outline" class="full-width">
+                  <input matInput formControlName="accountName" 
+                         (input)="onSearch(i, $any($event.target).value)"
+                         [attr.aria-expanded]="showAccountDropdown[i]"
+                         placeholder="Search account...">
+                </mat-form-field>
+                
+                <!-- Dropdown for account selection -->
+                <div class="account-dropdown" *ngIf="showAccountDropdown[i] && filteredAccounts[i] && filteredAccounts[i].length > 0">
+                  <ul>
+                    <li *ngFor="let acc of filteredAccounts[i]" 
+                        (click)="selectAccount(i, acc)"
+                        [class.selected]="entry.get('account_id')?.value === acc.id">
+                      {{ acc.name }} <small>({{ acc.group }})</small>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="full-width">
+                  <input matInput type="number" formControlName="debit" 
+                         (input)="onAmountChange()" min="0" step="0.01">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="full-width">
+                  <input matInput type="number" formControlName="credit" 
+                         (input)="onAmountChange()" min="0" step="0.01">
+                </mat-form-field>
+              </td>
+              <td>
+                <button mat-icon-button color="warn" 
+                        (click)="deleteEntry(i)" 
+                        [disabled]="entries.length <= 1"
+                        type="button">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <button mat-stroked-button color="primary" (click)="addEntryRow()" type="button" class="add-row-btn">
+          <mat-icon>add</mat-icon> Add Row
+        </button>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <span class="label">Total Tax Liability:</span>
+            <span class="value">{{ totalLiability | currency:'INR':'symbol' }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Less: Input Credit:</span>
+            <span class="value credit">- {{ totalCredit | currency:'INR':'symbol' }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="summary-item total">
+            <span class="label">Net Payable:</span>
+            <span class="value" [class.negative]="netPayable < 0">
+              {{ netPayable | currency:'INR':'symbol' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="balance-indicator" [class.balanced]="isBalanced()" [class.not-balanced]="!isBalanced()">
+          <mat-icon>{{ isBalanced() ? 'check_circle' : 'error' }}</mat-icon>
+          <span>{{ isBalanced() ? 'Ready to Save' : 'Please check tax calculations' }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-form-field appearance="outline" class="full-width narration-field">
+      <mat-label>Narration</mat-label>
+      <textarea matInput formControlName="narration" rows="3" 
+                placeholder="Enter narration (optional)"></textarea>
+    </mat-form-field>
+  </form>
+</div>
