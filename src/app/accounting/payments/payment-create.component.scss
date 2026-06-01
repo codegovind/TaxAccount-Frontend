@@ -1,0 +1,42 @@
+.payment-form-container {
+  min-width: 500px;
+  max-width: 600px;
+
+  h2[mat-dialog-title] {
+    margin: 0 0 16px 0;
+    color: #1a1a1a;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .payment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .full-width {
+      width: 100%;
+    }
+
+    mat-form-field {
+      margin-bottom: 0;
+    }
+  }
+
+  mat-dialog-actions {
+    padding: 16px 24px;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 8px;
+
+    button {
+      min-width: 100px;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .payment-form-container {
+    min-width: auto;
+    width: 90vw;
+  }
+}
