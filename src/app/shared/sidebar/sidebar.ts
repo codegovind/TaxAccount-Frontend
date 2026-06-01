@@ -103,7 +103,8 @@ export class SidebarComponent implements OnInit {
         { title: 'Trial Balance', path: '/accounting/trial-balance' },
         { title: 'Profit & Loss', path: '/accounting/profit-loss' },
         { title: 'Balance Sheet', path: '/accounting/balance-sheet' },
-        { title: 'Cash Flow Report', path: '/accounting/cash-flow' }
+        { title: 'Cash Flow Report', path: '/accounting/cash-flow' },
+         { title: 'Payments', path: '/payments' }
       ]
     },
     { title: 'E-Way Bill', path: '/compliance/ewaybill', icon: '🚚' },

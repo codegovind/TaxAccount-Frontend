@@ -148,6 +148,10 @@ export const routes: Routes = [
         loadChildren: () => import('./accounting/accounting-module').then(m => m.default)
       },
       {
+        path: 'payments',
+        loadComponent: () => import('./accounting/payments/payment-list.component').then(c => c.PaymentListComponent)
+      },
+      {
         path: 'compliance',
         loadChildren: () => import('./compliance/compliance-module').then(m => m.default)
       },
