@@ -1,52 +1,124 @@
 ```
-# Angular cache
-.angular/
-
-# Environment variables
-.env
-.env.local
-.env.*
-
-# Logs
-*.log
-
 # Dependencies
 node_modules/
 
-# Build outputs
+# Build artifacts
 dist/
 build/
 target/
 
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+*.env.*
 
 # IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
+*.tmp
 
-# OS generated files
+# Python specific
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git/modules/
+*.sublime-workspace
+.pytest_cache/
+.mypy_cache/
+
+# Node.js specific
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+node_modules/
+dist/
+logs
+reports
+.nyc_output
+coverage
+.coverage
+.nyc-output
+.nyc-output/**
+*.lcov
+*.info
+*.raw
+*.json
+*.xml
+*.html
+*.log
+*.tmp
+*.tmp.*
+!*.tmp
+*.bak
+*.swp
+*.swo
+*~
 .DS_Store
 Thumbs.db
-
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
-
-# Temporary files
-*.tmp
-*.temp
-
-# Compressed files
+ehthumbs.db
+Icon?
+.directory
+.folders
+.lst
+.svn
+.git
+.hg
+.cvs
+.rcs
+.scc
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+.DocumentRevisions-V100
+.FBCIndex
+.savedState
+.metadata
+.IdeaIC*
+.idea
+*.iml
+*.iws
+*.jar
+*.war
+*.ear
+*.class
+*.o
+*.a
+*.so
+*.obj
+*.out
+*.dll
+*.lib
+*.dylib
+*.exe
+*.msi
+*.bin
+*.dat
 *.zip
-*.gz
 *.tar
+*.gz
 *.tgz
 *.bz2
 *.xz
@@ -66,25 +138,4 @@ htmlcov/
 *.tar.bz2
 *.tar.xz
 *.tar.zst
-
-# MyPy cache
-.mypy_cache/
-# PyTest cache
-.pytest_cache/
-
-# Virtual environments
-.venv/
-venv/
-env/
-
-# Gradle
-.gradle/
-
-# Compiled binaries
-*.exe
-*.dll
-*.so
-*.a
-*.out
-*.class
 ```

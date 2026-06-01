@@ -49,3 +49,28 @@ export interface FinancialStatement {
   level: number;
   children: FinancialStatement[];
 }
+
+export interface CashFlowStatement {
+  method: 'direct' | 'indirect';
+  period: string;
+  fromDate: Date;
+  toDate: Date;
+  operatingActivities: CashFlowSection;
+  investingActivities: CashFlowSection;
+  financingActivities: CashFlowSection;
+  openingBalance: number;
+  closingBalance: number;
+  netChange: number;
+}
+
+export interface CashFlowSection {
+  title: string;
+  items: CashFlowLineItem[];
+  netAmount: number;
+}
+
+export interface CashFlowLineItem {
+  description: string;
+  amount: number;
+  type: 'inflow' | 'outflow' | 'total';
+}

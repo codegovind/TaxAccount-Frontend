@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { AccountHead, CreateAccountHead, LedgerEntry, TrialBalance, FinancialStatement } from './accounting.models';
+import { AccountHead, CreateAccountHead, LedgerEntry, TrialBalance, FinancialStatement, CashFlowStatement } from './accounting.models';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +52,15 @@ export class AccountingService {
   getBalanceSheet(asOfDate: Date) {
     const params = { asOfDate: asOfDate.toISOString().split('T')[0] };
     return this.http.get<FinancialStatement[]>(`${this.apiUrl}/balance-sheet`, { params });
+  }
+
+  getCashFlow(fromDate: Date, toDate: Date, method: 'direct' | 'indirect' = 'direct') {
+    const params = {
+      fromDate: fromDate.toISOString().split('T')[0],
+      toDate: toDate.toISOString().split('T')[0],
+      method: method
+    };
+    return this.http.get<CashFlowStatement>(`${this.apiUrl}/cash-flow`, { params });
   }
 
   deleteAccount(id: number) {

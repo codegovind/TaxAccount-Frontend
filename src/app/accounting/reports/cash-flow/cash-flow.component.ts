@@ -139,11 +139,19 @@ export class CashFlowComponent implements OnInit, OnDestroy {
     this.loading = true;
     const { method, fromDate, toDate } = this.cashFlowForm.value;
     
-    // Mock data for demonstration - replace with actual API call
-    setTimeout(() => {
-      this.cashFlowData = this.generateMockCashFlow(method);
-      this.loading = false;
-    }, 500);
+    this.accountingService.getCashFlow(fromDate, toDate, method)
+      .subscribe({
+        next: (data) => {
+          this.cashFlowData = data;
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error loading cash flow:', error);
+          // Fallback to mock data for demonstration
+          this.cashFlowData = this.generateMockCashFlow(method);
+          this.loading = false;
+        }
+      });
   }
 
   generateMockCashFlow(method: string): CashFlowStatement {
