@@ -1,0 +1,157 @@
+.cash-flow-container {
+  padding: 24px;
+}
+
+.cash-flow-card {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.filters {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+
+  p {
+    margin-top: 16px;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 24px;
+}
+
+.cash-flow-table {
+  width: 100%;
+
+  th, td {
+    padding: 12px 16px;
+  }
+
+  th {
+    font-weight: 600;
+    background-color: #f5f5f5;
+  }
+
+  .numeric {
+    text-align: right;
+    font-family: 'Roboto Mono', monospace;
+  }
+
+  .positive {
+    color: #2e7d32;
+  }
+
+  .negative {
+    color: #c62828;
+  }
+}
+
+.summary-totals {
+  margin-top: 24px;
+}
+
+.total-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.total-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .value {
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Roboto Mono', monospace;
+
+    &.positive {
+      color: #a5d6a7;
+    }
+
+    &.negative {
+      color: #ef9a9a;
+    }
+  }
+
+  &.highlight {
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 0 -16px -12px -16px;
+    padding: 16px 16px 12px 16px;
+    border-radius: 0 0 4px 4px;
+
+    .value {
+      font-size: 20px;
+      color: white !important;
+    }
+  }
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cash-flow-container {
+    padding: 16px;
+  }
+
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .total-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    .value {
+      font-size: 18px;
+    }
+  }
+}

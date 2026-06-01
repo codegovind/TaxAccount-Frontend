@@ -40,6 +40,11 @@ const routes: Routes = [
     path: 'balance-sheet',
     loadComponent: () => import('./reports/balance-sheet/balance-sheet.component').then(m => m.BalanceSheetComponent),
     title: 'Balance Sheet'
+  },
+  {
+    path: 'cash-flow',
+    loadComponent: () => import('./cash-flow-report/cash-flow-report.component').then(m => m.CashFlowReportComponent),
+    title: 'Cash Flow Report'
   }
 ];
 
