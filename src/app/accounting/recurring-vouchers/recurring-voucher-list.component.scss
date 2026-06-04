@@ -1,0 +1,113 @@
+.container {
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    color: #333;
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  mat-form-field {
+    min-width: 200px;
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #666;
+
+  p {
+    margin-top: 16px;
+  }
+}
+
+table {
+  width: 100%;
+}
+
+.template-name {
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    font-size: 14px;
+    color: #333;
+  }
+
+  small {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+  }
+}
+
+.frequency-badge {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.day-info {
+  font-size: 12px;
+  color: #666;
+  margin-left: 4px;
+}
+
+.overdue {
+  color: #d32f2f;
+  font-weight: 500;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #ccc;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin: 16px 0 8px;
+    color: #333;
+  }
+
+  p {
+    margin-bottom: 24px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+mat-chip {
+  font-size: 12px;
+}
