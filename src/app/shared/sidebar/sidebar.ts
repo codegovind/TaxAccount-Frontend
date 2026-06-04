@@ -104,7 +104,18 @@ export class SidebarComponent implements OnInit {
         { title: 'Profit & Loss', path: '/accounting/profit-loss' },
         { title: 'Balance Sheet', path: '/accounting/balance-sheet' },
         { title: 'Cash Flow Report', path: '/accounting/cash-flow' },
-         { title: 'Payments', path: '/payments' }
+        { title: 'Payments', path: '/payments' },
+        { title: 'Expenses', path: '/expenses' }
+      ]
+    },
+    {
+      title: 'Inventory',
+      path: '/inventory',
+      icon: '🏭',
+      children: [
+        { title: 'Warehouses', path: '/inventory/godowns' },
+        { title: 'Stock Batches', path: '/inventory/batches' },
+        { title: 'Batch Adjustment', path: '/inventory/adjust-batch' }
       ]
     },
     { title: 'E-Way Bill', path: '/compliance/ewaybill', icon: '🚚' },
@@ -114,7 +125,8 @@ export class SidebarComponent implements OnInit {
       icon: '⚙️',
       children: [
         { title: 'Company Settings', path: '/settings/company' },
-        { title: 'Feature Toggles', path: '/settings/features' }
+        { title: 'Feature Toggles', path: '/settings/features' },
+        { title: 'User Management', path: '/settings/users' }
       ]
     }
   ];

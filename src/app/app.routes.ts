@@ -152,6 +152,22 @@ export const routes: Routes = [
         loadComponent: () => import('./accounting/payments/payment-list.component').then(c => c.PaymentListComponent)
       },
       {
+        path: 'expenses',
+        loadChildren: () => import('./accounting/expenses/expenses.routes').then(m => m.default)
+      },
+      {
+        path: 'inventory/godowns',
+        loadComponent: () => import('./inventory/godowns/godown-list.component').then(c => c.GodownListComponent)
+      },
+      {
+        path: 'inventory/batches',
+        loadComponent: () => import('./inventory/stock-batches/stock-batch-list.component').then(c => c.StockBatchListComponent)
+      },
+      {
+        path: 'inventory/adjust-batch',
+        loadComponent: () => import('./inventory/batch-adjustment/batch-adjustment.component').then(c => c.BatchAdjustmentComponent)
+      },
+      {
         path: 'compliance',
         loadChildren: () => import('./compliance/compliance-module').then(m => m.default)
       },

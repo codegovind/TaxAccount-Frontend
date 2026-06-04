@@ -1,0 +1,36 @@
+.godown-form-container {
+  padding: 24px;
+
+  h2 {
+    margin: 0 0 24px 0;
+    color: #333;
+  }
+
+  .form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 400px;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .checkbox-field {
+    padding: 8px 0;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+
+    button {
+      min-width: 100px;
+    }
+  }
+}
