@@ -115,7 +115,8 @@ export class SidebarComponent implements OnInit {
       children: [
         { title: 'Warehouses', path: '/inventory/godowns' },
         { title: 'Stock Batches', path: '/inventory/batches' },
-        { title: 'Batch Adjustment', path: '/inventory/adjust-batch' }
+        { title: 'Batch Adjustment', path: '/inventory/adjust-batch' },
+        { title: 'Stock Journal', path: '/inventory/stock-journal' }
       ]
     },
     { title: 'E-Way Bill', path: '/compliance/ewaybill', icon: '🚚' },

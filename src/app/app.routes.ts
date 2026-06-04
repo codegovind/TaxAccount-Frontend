@@ -168,6 +168,18 @@ export const routes: Routes = [
         loadComponent: () => import('./inventory/batch-adjustment/batch-adjustment.component').then(c => c.BatchAdjustmentComponent)
       },
       {
+        path: 'inventory/stock-journal',
+        loadComponent: () => import('./inventory/stock-journal/stock-journal-list.component').then(c => c.StockJournalListComponent)
+      },
+      {
+        path: 'inventory/stock-journal/new',
+        loadComponent: () => import('./inventory/stock-journal/stock-journal-entry.component').then(c => c.StockJournalEntryComponent)
+      },
+      {
+        path: 'inventory/stock-journal/:id',
+        loadComponent: () => import('./inventory/stock-journal/stock-journal-detail.component').then(c => c.StockJournalDetailComponent)
+      },
+      {
         path: 'compliance',
         loadChildren: () => import('./compliance/compliance-module').then(m => m.default)
       },
