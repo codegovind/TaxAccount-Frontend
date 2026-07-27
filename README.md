@@ -1,4 +1,4 @@
-# TaxaccountFrontend
+# TaxAccount Frontend
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
 
@@ -38,7 +38,13 @@ This will compile your project and store the build artifacts in the `dist/` dire
 
 ## Running unit tests
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+If this project is configured to use Vitest, run:
+
+```bash
+npm test
+```
+
+If your Angular setup uses `ng test` (Karma or other test runner), run:
 
 ```bash
 ng test
