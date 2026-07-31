@@ -14,19 +14,20 @@ import { AccountingService } from '../../../core/services/accounting.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { TallyShortcutsDirective } from '../../../shared/directives/tally-shortcuts.directive';
 import { Subject, takeUntil } from 'rxjs';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 interface AccountHead { id: number; name: string; code?: string; groupId: number; groupName: string; type: number; }
 
 @Component({
   selector: 'app-debit-note',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatIconModule, MatCardModule, MatDividerModule, MatAutocompleteModule, TallyShortcutsDirective],
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatIconModule, MatCardModule, MatDividerModule, MatAutocompleteModule, TallyShortcutsDirective, MatSnackBarModule],
   templateUrl: './debit-note.component.html',
   styleUrls: ['./debit-note.component.css']
 })
 export class DebitNoteComponent implements OnInit, OnDestroy {
   voucherForm!: FormGroup; allAccounts: AccountHead[] = []; filteredAccounts: AccountHead[] = []; isLoading = false; isSaving = false; totalAmount = 0; private destroy$ = new Subject<void>();
-  constructor(private fb: FormBuilder, private accountingService: AccountingService, private authService: AuthService, private router: Router) {}
+  constructor(private fb: FormBuilder, private accountingService: AccountingService, private authService: AuthService, private router: Router, private snackBar: MatSnackBar) {}
   ngOnInit(): void { this.initForm(); this.loadAccounts(); }
   ngOnDestroy(): void { this.destroy$.next(); this.destroy$.complete(); }
   initForm(): void { this.voucherForm = this.fb.group({ date: [new Date().toISOString().split('T')[0], [Validators.required]], referenceNo: [''], reason: ['', Validators.required], supplierAccount: ['', Validators.required], entries: this.fb.array([this.createEntry()]) }); }
@@ -39,11 +40,6 @@ export class DebitNoteComponent implements OnInit, OnDestroy {
   selectAccount(account: AccountHead, index: number): void { const entry = this.entries.at(index); entry.patchValue({ accountId: account.id, accountName: account.name }); this.filteredAccounts = this.allAccounts; }
   calculateTotal(): void { this.totalAmount = this.entries.controls.reduce((sum, ctrl) => sum + (ctrl.get('amount')?.value || 0), 0); }
   onShortcut(shortcut: string): void { switch (shortcut) { case 'NEW_ENTRY': this.resetForm(); break; case 'SAVE': this.saveVoucher(); break; case 'CANCEL': this.cancel(); break; } }
-  saveVoucher(): void { if (!this.voucherForm.valid) { alert('Please fill all required fields'); return; } this.isSaving = true; const formValue = this.voucherForm.value; const voucherData = { voucherType: 'DebitNote', date: formValue.date, referenceNo: formValue.referenceNo, reason: formValue.reason, supplierId: formValue.supplierAccount, entries: formValue.entries.map((e: any) => ({ accountId: e.accountId, amount: e.amount, narration: e.narration })), totalAmount: this.totalAmount, tenantId: 1 }; const tenantId = this.authService.getTenantId(); if (!tenantId) { alert('Tenant context missing. Cannot save debit note.'); this.isSaving = false; return; } // comment out hard-coded and replace with runtime
-  // voucherData.tenantId = 1; // previously hard-coded
-  voucherData.tenantId = tenantId;
-  console.log('Saving debit note:', voucherData);
-  alert('Debit Note saved successfully!');
-  this.resetForm(); }
+  saveVoucher(): void { if (!this.voucherForm.valid) { this.snackBar.open('Please fill all required fields', 'Close', { duration: 3000 }); return; } this.isSaving = true; const formValue = this.voucherForm.value; const voucherEntries = formValue.entries.map((e: any) => ({ accountId: e.accountId, amount: e.amount, narration: e.narration })); const tenantId = this.authService.getTenantId(); if (!tenantId) { this.snackBar.open('Tenant context missing. Cannot save debit note.', 'Close', { duration: 4000 }); this.isSaving = false; return; } const voucherData = { voucherType: 'DebitNote', date: formValue.date, referenceNo: formValue.referenceNo, reason: formValue.reason, supplierId: formValue.supplierAccount, entries: voucherEntries, totalAmount: this.totalAmount, tenantId }; console.log('Saving debit note:', voucherData); this.snackBar.open('Debit Note saved successfully!', 'Close', { duration: 3000 }); this.resetForm(); }
   resetForm(): void { this.voucherForm.reset({ date: new Date().toISOString().split('T')[0], referenceNo: '', reason: '', supplierAccount: '', entries: [this.createEntry()] }); this.calculateTotal(); }
   cancel(): void { if (confirm('Discard changes?')) { this.router.navigate(['/accounting']); } }
