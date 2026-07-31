@@ -12,6 +12,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
 import { AccountingService } from '../../../core/services/accounting.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { TallyShortcutsDirective } from '../../../shared/directives/tally-shortcuts.directive';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -73,6 +74,7 @@ export class JournalVoucherComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private accountingService: AccountingService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
@@ -197,12 +199,20 @@ export class JournalVoucherComponent implements OnInit, OnDestroy {
       narration: e.narration || formValue.narration || ''
     }));
 
+    const tenantId = this.authService.getTenantId();
+    if (!tenantId) {
+      alert('Tenant context missing. Cannot save voucher.');
+      this.isSaving = false;
+      return;
+    }
+
     const voucherData = {
       voucherType: 'Journal',
       date: formValue.date,
       narration: formValue.narration,
       entries: entries,
-      tenantId: 1 // TODO: Get from auth service
+      // tenantId: 1 // commented out - replaced with runtime tenantId
+      tenantId: tenantId
     };
 
     // TODO: Add createVoucher method to AccountingService
