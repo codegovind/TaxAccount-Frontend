@@ -41,29 +41,25 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    //return !!this.getToken();
     const token = this.getToken();
     if (!token) return false; // No token at all
 
-    // Use your existing decode method to read the JWT payload
-    const decoded: any = this.decodeToken(token); 
-    
-    // JWTs contain an 'exp' (expiration) claim in seconds
-    if (decoded && decoded.exp) {
-      // Convert seconds to milliseconds to compare with JavaScript's Date.now()
+    const decoded: any = this.decodeToken(token);
+    if (!decoded) return false;
+
+    if (decoded.exp) {
       const isExpired = (decoded.exp * 1000) < Date.now();
-      
       if (isExpired) {
         console.warn('Token is expired! Cleaning up storage...');
-        this.logout(); // Automatically delete the dead token
-        return false;  // Tell the guard they are NOT logged in
+        this.logout();
+        return false;
       }
     }
 
     return true; // Token exists and is not expired
   }
 
-  // --- NEW: Token Handling Logic ---
+  // --- NEW: Token Handling Logic (robust decode + helpers) ---
 
   private handleAuthentication(token: string) {
     localStorage.setItem('taxaccount_token', token);
@@ -79,12 +75,36 @@ export class AuthService {
     }
   }
 
+  /**
+   * Robust JWT payload decoder that supports URL-safe Base64 and missing padding.
+   * Returns a DecodedToken or null on failure.
+   */
   private decodeToken(token: string): DecodedToken | null {
     try {
-      // JWTs have 3 parts separated by dots. The middle part is the data payload.
-      const payload = token.split('.')[1];
-      const decodedJson = atob(payload); // Decodes base64 string
-      return JSON.parse(decodedJson) as DecodedToken;
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      let payload = parts[1];
+
+      // Replace URL-safe characters
+      payload = payload.replace(/-/g, '+').replace(/_/g, '/');
+      // Pad with '=' to make length a multiple of 4
+      while (payload.length % 4 !== 0) {
+        payload += '=';
+      }
+
+      const decodedJson = atob(payload);
+      const obj = JSON.parse(decodedJson);
+
+      // Normalize common claim names to a consistent interface
+      const normalized: any = {
+        userId: obj.userId ?? obj.user_id ?? obj.sub ?? null,
+        tenantId: obj.tenantId ?? obj.tenant_id ?? obj.TenantId ?? obj.tenant ?? null,
+        companyName: obj.companyName ?? obj.company_name ?? obj.cn ?? null,
+        roles: obj.roles ?? obj.role ?? [],
+        exp: obj.exp ?? null
+      };
+
+      return normalized as DecodedToken;
     } catch (e) {
       console.error('Error decoding token', e);
       return null;
@@ -95,9 +115,16 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  getTenantId(): number | null {
+    const u = this.getCurrentUser();
+    if (!u) return null;
+    // Ensure number or null
+    const t = u.tenantId;
+    if (t === null || t === undefined) return null;
+    return typeof t === 'number' ? t : parseInt(String(t), 10) || null;
+  }
+
   hasPermission(permission: string): boolean {
-    // For now, if they are logged in, we let them proceed. 
-    // You can strictly tie this to roles/permissions inside the DecodedToken later!
     return this.isLoggedIn();
   }
 }
