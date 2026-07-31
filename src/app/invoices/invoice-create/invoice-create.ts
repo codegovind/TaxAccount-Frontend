@@ -1,4 +1,3 @@
----
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
@@ -10,11 +9,12 @@ import { ContactService } from '../../core/services/contact.service';
 import { TallyShortcutsDirective } from '../../shared/directives/tally-shortcuts.directive';
 import { MatDialog } from '@angular/material/dialog';
 import { FastLedgerModalComponent } from '../../shared/components/fast-ledger-modal.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-invoice-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, TallyShortcutsDirective],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, TallyShortcutsDirective, MatSnackBarModule],
   templateUrl: './invoice-create.html',
   styleUrl: './invoice-create.scss'
 })
@@ -37,7 +37,8 @@ export class InvoiceCreateComponent implements OnInit {
     private authService: AuthService,
     private contactService: ContactService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     this.invoiceForm = this.fb.group({
       invoiceType: [1, Validators.required],   // 1 = Sale
@@ -72,7 +73,7 @@ export class InvoiceCreateComponent implements OnInit {
   openFastLedgerModal(): void {
     const tenantId = this.authService.getTenantId();
     if (!tenantId) {
-      this.errorMessage.set('Tenant context missing. Please log in again.');
+      this.snackBar.open('Tenant context missing. Cannot create ledger.', 'Close', { duration: 4000 });
       return;
     }
 
@@ -83,7 +84,7 @@ export class InvoiceCreateComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('New ledger created:', result);
+        this.snackBar.open('New ledger created', 'Close', { duration: 3000 });
         // Reload contacts to include the new ledger if needed
         this.loadContacts();
       }
@@ -199,11 +200,23 @@ export class InvoiceCreateComponent implements OnInit {
   onSubmit(): void {
     if (this.invoiceForm.invalid) return;
 
+    const tenantId = this.authService.getTenantId();
+    if (!tenantId) {
+      this.snackBar.open('Tenant context missing. Cannot create invoice.', 'Close', { duration: 4000 });
+      return;
+    }
+
     this.isSubmitting.set(true);
     this.errorMessage.set('');
 
-    this.invoiceService.create(this.invoiceForm.value).subscribe({
+    const payload = {
+      ...this.invoiceForm.value,
+      tenantId
+    };
+
+    this.invoiceService.create(payload).subscribe({
       next: (invoice) => {
+        this.snackBar.open('Invoice created', 'Close', { duration: 3000 });
         this.router.navigate(['/invoices', invoice.id]);
       },
       error: (err) => {
