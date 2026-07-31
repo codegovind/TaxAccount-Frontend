@@ -1,3 +1,4 @@
+---
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
@@ -69,9 +70,15 @@ export class InvoiceCreateComponent implements OnInit {
   }
 
   openFastLedgerModal(): void {
+    const tenantId = this.authService.getTenantId();
+    if (!tenantId) {
+      this.errorMessage.set('Tenant context missing. Please log in again.');
+      return;
+    }
+
     const dialogRef = this.dialog.open(FastLedgerModalComponent, {
       width: '500px',
-      data: { tenantId: 1 } // TODO: Get actual tenantId from auth service
+      data: { tenantId }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -96,11 +103,6 @@ export class InvoiceCreateComponent implements OnInit {
       error: (err) => console.error('Error loading contacts:', err)
     });
   }
-//   loadCustomers(): void {
-//   this.contactService.getCustomers().subscribe({
-//     next: (data) => this.customers.set(data)
-//   });
-// }
 
   get items(): FormArray {
     return this.invoiceForm.get('items') as FormArray;
