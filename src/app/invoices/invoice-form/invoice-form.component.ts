@@ -18,6 +18,8 @@ import { AccountingService } from '../../core/services/accounting.service';
 import { TallyShortcutsDirective } from '../../shared/directives/tally-shortcuts.directive';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { AuthService } from '../../core/services/auth.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 interface AccountHead {
   id: string;
@@ -54,7 +56,8 @@ interface InvoiceItem {
     MatChipsModule,
     MatAutocompleteModule,
     MatTooltipModule,
-    TallyShortcutsDirective
+    TallyShortcutsDirective,
+    MatSnackBarModule
   ],
   templateUrl: './invoice-form.component.html',
   styleUrls: ['./invoice-form.component.css']
@@ -78,7 +81,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private accountingService: AccountingService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -235,11 +240,17 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const tenantId = this.authService.getTenantId();
+    if (!tenantId) {
+      this.snackBar.open('Tenant context missing. Cannot save invoice.', 'Close', { duration: 4000 });
+      return;
+    }
+
     this.isSaving = true;
     const formValue = this.invoiceForm.value;
     
     const voucherData = {
-      tenantId: 'default',
+      tenantId: tenantId,
       voucherType: 10, // Invoice type
       date: formValue.invoiceDate,
       entries: this.items.controls.map((item, idx) => ({
@@ -253,8 +264,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     };
 
     // TODO: Add createVoucher method to AccountingService
+    // Replace console/alert with snackbar for user friendly, non-blocking feedback
     console.log('Saving invoice:', voucherData);
-    alert('Invoice saved successfully!');
+    this.snackBar.open('Invoice saved successfully!', 'Close', { duration: 3000 });
     this.router.navigate(['/invoices']);
   }
 
