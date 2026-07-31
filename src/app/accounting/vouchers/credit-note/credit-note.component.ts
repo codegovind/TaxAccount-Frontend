@@ -11,6 +11,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
 import { AccountingService } from '../../../core/services/accounting.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { TallyShortcutsDirective } from '../../../shared/directives/tally-shortcuts.directive';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -39,7 +40,7 @@ export class CreditNoteComponent implements OnInit, OnDestroy {
   totalAmount = 0;
   private destroy$ = new Subject<void>();
 
-  constructor(private fb: FormBuilder, private accountingService: AccountingService, private router: Router) {}
+  constructor(private fb: FormBuilder, private accountingService: AccountingService, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void { this.initForm(); this.loadAccounts(); }
   ngOnDestroy(): void { this.destroy$.next(); this.destroy$.complete(); }
@@ -105,16 +106,28 @@ export class CreditNoteComponent implements OnInit, OnDestroy {
     if (!this.voucherForm.valid) { alert('Please fill all required fields'); return; }
     this.isSaving = true;
     const formValue = this.voucherForm.value;
+
+    const voucherEntries = formValue.entries.map((e: any) => ({ accountId: e.accountId, amount: e.amount, narration: e.narration }));
+
+    const tenantId = this.authService.getTenantId();
+    if (!tenantId) {
+      alert('Tenant context missing. Cannot save credit note.');
+      this.isSaving = false;
+      return;
+    }
+
     const voucherData = {
       voucherType: 'CreditNote',
       date: formValue.date,
       referenceNo: formValue.referenceNo,
       reason: formValue.reason,
       customerId: formValue.customerAccount,
-      entries: formValue.entries.map((e: any) => ({ accountId: e.accountId, amount: e.amount, narration: e.narration })),
+      entries: voucherEntries,
       totalAmount: this.totalAmount,
-      tenantId: 1
+      // tenantId: 1 // previously hard-coded
+      tenantId
     };
+
     // TODO: Add createVoucher method to AccountingService
     console.log('Saving credit note:', voucherData);
     alert('Credit Note saved successfully!');
@@ -127,4 +140,3 @@ export class CreditNoteComponent implements OnInit, OnDestroy {
   }
 
   cancel(): void { if (confirm('Discard changes?')) { this.router.navigate(['/accounting']); } }
-}
