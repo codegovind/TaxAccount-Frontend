@@ -82,6 +82,10 @@ export class AccountingService {
     return this.http.post<AccountHead>(`${this.apiUrl}/chart-of-accounts`, account);
   }
 
+  createVoucher(voucher: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/vouchers`, voucher);
+  }
+
   getGeneralLedger(accountHeadId?: number, fromDate?: Date, toDate?: Date): Observable<LedgerEntry[]> {
     let params = new HttpParams();
     if (accountHeadId) params = params.set('accountHeadId', accountHeadId.toString());
