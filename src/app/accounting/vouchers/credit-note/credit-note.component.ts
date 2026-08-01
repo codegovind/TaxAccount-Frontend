@@ -14,6 +14,7 @@ import { AccountingService } from '../../../core/services/accounting.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { TallyShortcutsDirective } from '../../../shared/directives/tally-shortcuts.directive';
 import { Subject, takeUntil } from 'rxjs';
+import { NotificationService } from '../../../core/services/notification.service';
 
 interface AccountHead {
   id: number;
@@ -40,7 +41,13 @@ export class CreditNoteComponent implements OnInit, OnDestroy {
   totalAmount = 0;
   private destroy$ = new Subject<void>();
 
-  constructor(private fb: FormBuilder, private accountingService: AccountingService, private authService: AuthService, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private accountingService: AccountingService,
+    private authService: AuthService,
+    private notifications: NotificationService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void { this.initForm(); this.loadAccounts(); }
   ngOnDestroy(): void { this.destroy$.next(); this.destroy$.complete(); }
@@ -90,20 +97,12 @@ export class CreditNoteComponent implements OnInit, OnDestroy {
     this.filteredAccounts = this.allAccounts;
   }
 
-  calculateTotal(): void {
-    this.totalAmount = this.entries.controls.reduce((sum, ctrl) => sum + (ctrl.get('amount')?.value || 0), 0);
-  }
+  calculateTotal(): void { this.totalAmount = this.entries.controls.reduce((sum, ctrl) => sum + (ctrl.get('amount')?.value || 0), 0); }
 
-  onShortcut(shortcut: string): void {
-    switch (shortcut) {
-      case 'NEW_ENTRY': this.resetForm(); break;
-      case 'SAVE': this.saveVoucher(); break;
-      case 'CANCEL': this.cancel(); break;
-    }
-  }
+  onShortcut(shortcut: string): void { switch (shortcut) { case 'NEW_ENTRY': this.resetForm(); break; case 'SAVE': this.saveVoucher(); break; case 'CANCEL': this.cancel(); break; } }
 
   saveVoucher(): void {
-    if (!this.voucherForm.valid) { alert('Please fill all required fields'); return; }
+    if (!this.voucherForm.valid) { this.notifications.error('Please fill all required fields'); return; }
     this.isSaving = true;
     const formValue = this.voucherForm.value;
 
@@ -111,7 +110,7 @@ export class CreditNoteComponent implements OnInit, OnDestroy {
 
     const tenantId = this.authService.getTenantId();
     if (!tenantId) {
-      alert('Tenant context missing. Cannot save credit note.');
+      this.notifications.error('Tenant context missing. Cannot save credit note.');
       this.isSaving = false;
       return;
     }
@@ -124,13 +123,12 @@ export class CreditNoteComponent implements OnInit, OnDestroy {
       customerId: formValue.customerAccount,
       entries: voucherEntries,
       totalAmount: this.totalAmount,
-      // tenantId: 1 // previously hard-coded
       tenantId
     };
 
     // TODO: Add createVoucher method to AccountingService
     console.log('Saving credit note:', voucherData);
-    alert('Credit Note saved successfully!');
+    this.notifications.success('Credit Note saved (local only).');
     this.resetForm();
   }
 
